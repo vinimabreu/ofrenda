@@ -28,9 +28,18 @@ from .ledger import Ledger, LineFact
 UNSAFE = re.compile(r"[\x00-\x08\x0b-\x1f\x7f-\x9f\u061c\u200b-\u200f\u2028-\u202e\u2066-\u2069\ufeff]")
 
 
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+
+
+def mask_emails(text: str) -> str:
+    """Email addresses shown as <email>: a page about people should not republish their addresses."""
+    return EMAIL.sub("<email>", text)
+
+
 def safe(text: str) -> str:
-    """One line of untrusted text with every control and direction character made visible."""
-    text = text.replace("\t", "    ").replace("\n", " ")
+    """One line of untrusted text with every control and direction character made visible, and
+    email addresses masked."""
+    text = mask_emails(text.replace("\t", "    ").replace("\n", " "))
     return UNSAFE.sub(lambda m: f"\\u{ord(m.group(0)):04x}" if ord(m.group(0)) > 0xff
                       else f"\\x{ord(m.group(0)):02x}", text)
 
@@ -64,8 +73,21 @@ def source_note(card: Card, model: str) -> str:
     return "from git alone"
 
 
+NOBODY_WITH_LINES = ("No one has lines here that ofrenda can credit to a person: what it read is binary, "
+                     "generated, or written by bots.")
+NOBODY_MOVED_ON = "Nobody here has moved on yet: everyone with lines at this revision committed recently."
+LIMIT_NOTE = ("The sentences come from a model running on the machine that made this page. They are used only when "
+              "every phrase they quote is in that person's commit messages and they pass a list of word rules; "
+              "a sentence can still say something the messages do not support.")
+
+
+def empty_note(ledger: Ledger) -> str:
+    return NOBODY_WITH_LINES if not ledger.people else NOBODY_MOVED_ON
+
+
 def intro(ledger: Ledger, quiet_days: int, moved_on: int) -> str:
-    return (f"{plural(len(ledger.people), 'person', 'people')} still have lines in {ledger.repo} at "
+    verb = "has" if len(ledger.people) == 1 else "have"
+    return (f"{plural(len(ledger.people), 'person', 'people')} still {verb} lines in {ledger.repo} at "
             f"{short(ledger.commit)} ({ledger.commit_date}); {count(moved_on)} of them made no commit in the "
             f"{count(quiet_days)} days before it.")
 
@@ -175,7 +197,7 @@ def terminal(ledger: Ledger, cards: Sequence[Card], *, quiet_days: int, moved_on
         out += [f"{indent}{p.dim('most lines') if i == 0 else ' ' * 10}   {line}" for i, line in enumerate(top)]
         out.append("")
     if not cards:
-        out += ["  Nobody here has moved on yet: everyone with lines at this revision committed recently.", ""]
+        out += [*textwrap.wrap(empty_note(ledger), width=width, initial_indent="  ", subsequent_indent="  "), ""]
     out.append(p.picado(width))
     for line in method_lines(ledger, quiet_days, stats, model):
         out += [p.dim(x) for x in textwrap.wrap(line, width=width)]
@@ -198,6 +220,11 @@ def md_code(text: str) -> str:
     fence = "`" * (longest + 1)
     pad = " " if text.startswith("`") or text.endswith("`") else ""
     return f"{fence}{pad}{text}{pad}{fence}"
+
+
+def md_cell_code(text: str) -> str:
+    """Inline code inside a table cell: a pipe would end the cell, even inside backticks."""
+    return md_code(text).replace("|", "\\|")
 
 
 def md_block(lines: Sequence[str], language: str = "") -> list[str]:
@@ -247,16 +274,15 @@ def markdown(ledger: Ledger, cards: Sequence[Card], *, quiet_days: int, moved_on
                 f"{plural(len(person.files), 'file')} |",
                 f"| Most lines | \"{md_text(person.top.subject)}\" ({md_code(short(person.top.oid))}, "
                 f"{person.top.date}): {plural(person.top.lines, 'line')} |",
-                f"| Oldest line | {md_code(f'{person.oldest.path}:{person.oldest.number}')} "
+                f"| Oldest line | {md_cell_code(f'{person.oldest.path}:{person.oldest.number}')} "
                 f"({person.oldest.date}, {md_code(short(person.oldest.oid))}) |", "",
                 *md_block([person.oldest.text], _language(person.oldest.path)), ""]
     if not cards:
-        out += ["Nobody here has moved on yet: everyone with lines at this revision committed recently.", ""]
+        out += [empty_note(ledger), ""]
     out += ["---", "", "### How this page was made", ""]
     out += [f"- {md_text(line)}" for line in method_lines(ledger, quiet_days, stats, model)]
     out += [f"- Made with ofrenda {__version__}. Every number, date, path and line of code above comes from git. "
-            "The sentences come from a model running on the machine that made this page, and are used only when "
-            "every phrase they quote is found in that person's commit messages.", ""]
+            + LIMIT_NOTE, ""]
     return "\n".join(out)
 
 
@@ -328,6 +354,8 @@ box-shadow:0 0 18px 6px rgba(255,159,28,.45);animation:flicker 2.8s ease-in-out 
 .candle::after{content:"";position:absolute;left:9px;top:-5px;width:2px;height:6px;background:#3b2a1e}
 @keyframes flicker{0%,100%{transform:scale(1) rotate(-1deg)}50%{transform:scale(1.06,.94) rotate(2deg)}}
 @media (prefers-reduced-motion:reduce){.candle::before{animation:none}}
+.marigold{position:absolute;left:20px;top:30px;width:28px;height:28px;border-radius:50%;
+background:radial-gradient(circle,#ffd166 0 22%,#ff9f1c 23% 55%,#e07a00 56% 70%,transparent 71%)}
 .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--rosa);margin:0 0 4px}
 h2{font:600 1.45rem/1.2 Georgia,"Times New Roman",serif;margin:0 0 4px;color:#ffe7c4}
 .when{color:var(--muted);font-size:.92rem;margin:0}
@@ -351,16 +379,20 @@ footer ul{padding-left:18px}
 
 
 def _h(text: str) -> str:
-    return html.escape(text, quote=True)
+    return html.escape(safe(text), quote=True)
 
 
 def _html_quote(quote: Quote) -> str:
     return f"<li>&ldquo;{_h(quote.text)}&rdquo; <small>{_h(short(quote.oid))}, {_h(quote.date)}</small></li>"
 
 
-def _elder_html(e: LineFact) -> str:
-    return (f'<article class="card elder"><div class="candle" aria-hidden="true"></div>'
-            f'<p class="label">The elder: the oldest line still running</p><h2>{_h(e.author)}</h2>'
+def _elder_html(e: LineFact, moved_on: bool) -> str:
+    """The candle is for people who moved on; an elder who still commits gets a marigold instead."""
+    mark = ('<div class="candle" aria-hidden="true"></div>' if moved_on
+            else '<div class="marigold" aria-hidden="true"></div>')
+    still = "" if moved_on else " <small>(still committing here)</small>"
+    return (f'<article class="card elder">{mark}'
+            f'<p class="label">The elder: the oldest line still running</p><h2>{_h(e.author)}{still}</h2>'
             f'<p class="when">{_h(e.date)}, in &ldquo;{_h(e.subject)}&rdquo; <small>({_h(short(e.oid))})</small></p>'
             f'<pre><code>{_h(e.text)}</code></pre>'
             f'<p class="source"><code>{_h(e.path)}:{e.number}</code></p></article>')
@@ -396,11 +428,11 @@ def html_page(ledger: Ledger, cards: Sequence[Card], *, quiet_days: int, moved_o
               stats: CardStats | None) -> str:
     cards_html = []
     if ledger.elder is not None:
-        cards_html.append(_elder_html(ledger.elder))
+        moved = {p.key for p in ledger.ghosts(quiet_days)}
+        cards_html.append(_elder_html(ledger.elder, ledger.elder.author_key in moved))
     cards_html += [_card_html(card, model) for card in cards]
     if not cards:
-        cards_html.append('<article class="card"><p class="words">Nobody here has moved on yet: everyone with lines '
-                          "at this revision committed recently.</p></article>")
+        cards_html.append(f'<article class="card"><p class="words">{_h(empty_note(ledger))}</p></article>')
     method = "".join(f"<li>{_h(line)}</li>" for line in method_lines(ledger, quiet_days, stats, model))
     return f"""<!doctype html>
 <html lang="en">
@@ -426,9 +458,8 @@ have moved on from this repository to other things, and their code is still in i
 </section>
 <footer>
 <ul>{method}
-<li>Every number, date, path and line of code on this page comes from git. The sentences come from a model running
-on the machine that made the page, and are used only when every phrase they quote is found in that person's commit
-messages. Made with ofrenda {_h(__version__)}.</li></ul>
+<li>Every number, date, path and line of code on this page comes from git. {_h(LIMIT_NOTE)} Made with ofrenda
+{_h(__version__)}.</li></ul>
 </footer>
 </main>
 {papel_picado().replace('class="picado"', 'class="picado bottom"')}
@@ -448,6 +479,10 @@ def as_json(ledger: Ledger, cards: Sequence[Card], *, quiet_days: int, moved_on:
         return {"person": person, "text": card.text, "quotes": [asdict(q) for q in card.quotes],
                 "source": card.source, "reasons": list(card.reasons), "cached": card.cached}
 
+    elder = asdict(ledger.elder) if ledger.elder else None
+    if elder is not None:
+        elder.pop("author_key", None)
+
     return {
         "ofrenda": __version__, "repo": ledger.repo, "commit": ledger.commit, "commit_date": ledger.commit_date,
         "quiet_days": quiet_days, "people_with_lines": len(ledger.people), "moved_on": moved_on,
@@ -455,12 +490,22 @@ def as_json(ledger: Ledger, cards: Sequence[Card], *, quiet_days: int, moved_on:
         "bot_lines": ledger.bot_lines, "blame_options": ledger.options, "ignored_commits": ledger.ignore_used,
         "shallow": ledger.shallow, "blame_seconds": ledger.blame_seconds, "blame_jobs": ledger.jobs,
         "facts_from_cache": ledger.cached, "model": model or None,
-        "elder": asdict(ledger.elder) if ledger.elder else None,
+        "elder": elder,
         "formatting_commits": [asdict(c) for c in ledger.suspects],
         "cards": [card_dict(c) for c in cards],
         "card_stats": ({k: v for k, v in asdict(stats).items() if k != "reasons"} if stats else None),
     }
 
 
+def _masked(value: Any) -> Any:
+    if isinstance(value, str):
+        return mask_emails(value)
+    if isinstance(value, list):
+        return [_masked(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _masked(v) for k, v in value.items()}
+    return value
+
+
 def dumps(data: dict[str, Any]) -> str:
-    return json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+    return json.dumps(_masked(data), indent=2, ensure_ascii=False) + "\n"

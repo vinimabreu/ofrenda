@@ -7,8 +7,8 @@ import pytest
 
 from ofrenda.cards import Card, CardStats, Quote
 from ofrenda.ledger import CommitFact, Ledger, LineFact, Person
-from ofrenda.render import (as_json, html_page, markdown, md_block, md_code, md_text, papel_picado, percent, safe,
-                            terminal, use_color)
+from ofrenda.render import (as_json, dumps, html_page, markdown, md_block, md_code, md_text, papel_picado, percent,
+                            safe, terminal, use_color)
 
 EVIL_NAME = "Eve <script>alert(1)</script> \x1b]52;c;cHduZWQ=\x07 \u202egnp.exe"
 EVIL_SUBJECT = "Fix `parser` | <img src=x onerror=alert(1)> \x1b[2J"
@@ -122,7 +122,9 @@ def test_html_is_self_contained_escaped_and_scriptless() -> None:
     assert "default-src 'none'" in page
     assert not re.search(r"""(src|href)\s*=\s*["']?(https?:)?//""", page)
     assert "http://" not in page and "https://" not in page and "@import" not in page
-    assert page.count('class="picado') == 2 and page.count('class="candle"') == 3
+    # the elder (Ana) never moved on in this ledger: a marigold, not a candle
+    assert page.count('class="picado') == 2 and page.count('class="candle"') == 2
+    assert page.count('class="marigold"') == 1 and "(still committing here)" in page
     assert "The elder: the oldest line still running" in page and "5,678" in page
 
 
@@ -140,12 +142,58 @@ def test_the_json_names_every_fact_and_leaves_out_emails() -> None:
 
 
 @pytest.mark.parametrize("renderer", ["terminal", "markdown", "html"])
-def test_an_empty_ofrenda_says_so(renderer: str) -> None:
+@pytest.mark.parametrize("with_people, message", [(True, "Nobody here has moved on yet"),
+                                                  (False, "No one has lines here that ofrenda can credit")])
+def test_an_empty_ofrenda_says_why(renderer: str, with_people: bool, message: str) -> None:
     kw = dict(KW, moved_on=0)
+    led = ledger(person()) if with_people else ledger()
     if renderer == "terminal":
-        text = terminal(ledger(), [], color=False, **kw)  # type: ignore[arg-type]
+        text = " ".join(terminal(led, [], color=False, **kw).split())  # type: ignore[arg-type]
     elif renderer == "markdown":
-        text = markdown(ledger(), [], **kw)  # type: ignore[arg-type]
+        text = markdown(led, [], **kw)  # type: ignore[arg-type]
     else:
-        text = html_page(ledger(), [], **kw)  # type: ignore[arg-type]
-    assert "Nobody here has moved on yet" in text
+        text = html_page(led, [], **kw)  # type: ignore[arg-type]
+    assert message in text
+
+
+def test_one_person_has_lines() -> None:
+    assert "1 person still has lines in lantern" in " ".join(
+        terminal(ledger(person()), [], color=False, **KW).split())  # type: ignore[arg-type]
+    assert "2 people still have lines" in " ".join(
+        terminal(ledger(person(), person("Bruno Takahashi")), [], color=False, **KW).split())  # type: ignore[arg-type]
+
+
+def test_email_addresses_are_masked_everywhere_they_are_shown() -> None:
+    subject = "[project @ Arch-1:someone@old-host.example--2003] initial import"
+    p = person(subject=subject)
+    card = Card(p, "", (Quote("mail me at someone@old-host.example please", "1" * 40, "2013-04-02"),), "git")
+    outputs = [terminal(ledger(p), [card], color=False, **KW),  # type: ignore[arg-type]
+               markdown(ledger(p), [card], **KW),  # type: ignore[arg-type]
+               html_page(ledger(p), [card], **KW),  # type: ignore[arg-type]
+               dumps(as_json(ledger(p), [card], **KW))]  # type: ignore[arg-type]
+    for text in outputs:
+        assert "someone@old-host.example" not in text and "email" in text
+
+
+def test_a_pipe_in_a_path_does_not_break_the_markdown_table() -> None:
+    p = person()
+    p.oldest = LineFact("odd`name|x.md", 2, "| pipe | table |", "1" * 40, "2013-04-02")
+    text = markdown(ledger(p), [Card(p, "", (), "git")], **KW)  # type: ignore[arg-type]
+    row = next(line for line in text.splitlines() if line.startswith("| Oldest line"))
+    assert row.count("|") - row.count("\\|") == 3  # two cells: three unescaped pipes
+
+
+def test_html_escapes_controls_in_names_too() -> None:
+    p = person(EVIL_NAME)
+    page = html_page(ledger(p, elder=LineFact("a.py", 1, "x = 1", "e" * 40, "2010-01-01", author=EVIL_NAME,
+                                             subject=EVIL_SUBJECT, author_key="email:c")),
+                     [Card(p, "", (), "git")], **KW)  # type: ignore[arg-type]
+    assert "\x1b" not in page and "\x07" not in page and "\u202e" not in page
+    assert "\\x1b]52" in page and "\\u202e" in page
+
+
+def test_an_elder_who_moved_on_gets_a_candle() -> None:
+    p = person()
+    elder = LineFact("README", 1, "Lantern", "e" * 40, "2010-01-01", author=p.name, subject="Start", author_key=p.key)
+    page = html_page(ledger(p, elder=elder), [], **KW)  # type: ignore[arg-type]
+    assert page.count('class="candle"') == 1 and 'class="marigold"' not in page
