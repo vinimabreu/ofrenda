@@ -130,6 +130,14 @@ def test_a_partial_clone_is_never_fetched_from(make_repo: MakeRepo, tmp_path: Pa
     assert sorted(p.name for p in (partial / "objects" / "pack").iterdir()) == objects_before
     assert main([str(partial), "--no-model", "--no-cache"]) == 2
     assert "could not be read" in capsys.readouterr().err
+    # with a cache: the partial read is not kept, so a complete clone of the same commit reads fine
+    cache = tmp_path / "cache"
+    assert main([str(partial), "--no-model", "--cache", str(cache)]) == 2
+    capsys.readouterr()
+    full = repo.bare_clone(tmp_path / "full.git")
+    assert main([str(full), "--no-model", "--cache", str(cache)]) == 0
+    captured = capsys.readouterr()
+    assert "could not be read" not in captured.err and "ofrenda for full" in captured.out
     # control: plain git fetches the missing blob on demand
     assert "hello, world" in git(partial, "cat-file", "-p", "HEAD:app.py")
     assert sorted(p.name for p in (partial / "objects" / "pack").iterdir()) != objects_before

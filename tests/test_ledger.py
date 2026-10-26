@@ -295,3 +295,66 @@ def test_no_wall_clock_anywhere(make_repo: MakeRepo, monkeypatch: pytest.MonkeyP
     import time as time_module
     monkeypatch.setattr(time_module, "time", lambda: 4_000_000_000.0)
     assert [p.name for p in ledger_of(repo.path).ghosts(730)] == [DARIO[0]]
+
+
+# -- fixes from the audit ------------------------------------------------------------------------
+
+def test_a_partial_clone_never_poisons_the_cache(make_repo: MakeRepo, tmp_path: Path) -> None:
+    repo = make_repo()
+    repo.commit({"a.py": lines("a", 3)}, author=DARIO, when=iso(T0))
+    repo.commit({"b.py": lines("b", 2)}, author=ANA, when=iso(T0 + DAY))
+    repo.run("config", "uploadpack.allowFilter", "true")
+    partial = tmp_path / "partial.git"
+    git(tmp_path, "clone", "-q", "--bare", "--filter=blob:none", f"file://{repo.path}", str(partial))
+    full = repo.bare_clone(tmp_path / "full.git")
+    cache = tmp_path / "cache"
+    first = ledger_of(partial, cache_dir=cache)
+    assert first.skipped.get("unreadable") == 2 and first.lines == 0
+    assert not cache.exists() or not list(cache.iterdir())
+    second = ledger_of(full, cache_dir=cache)
+    assert not second.cached and second.lines == 5 and "unreadable" not in second.skipped
+
+
+def test_a_cached_ledger_takes_the_name_of_the_clone_it_is_read_from(make_repo: MakeRepo, tmp_path: Path) -> None:
+    repo = make_repo()
+    repo.commit({"a.py": lines("a", 3)}, author=DARIO, when=iso(T0))
+    first = repo.bare_clone(tmp_path / "full.git")
+    second = repo.bare_clone(tmp_path / "renamed-fork.git")
+    cache = tmp_path / "cache"
+    assert ledger_of(first, cache_dir=cache).repo == "full"
+    again = ledger_of(second, cache_dir=cache)
+    assert again.cached and again.repo == "renamed-fork"
+
+
+@pytest.mark.parametrize("name, email", [
+    ("jenkins", "jenkins@ci.example"), ("Travis CI", "builds@travis.example"), ("CircleCI", "x@y.example"),
+    ("buildbot", "b@b.example"), ("GitHub Actions", "actions@github.example"), ("gitlab-ci", "g@l.example"),
+    ("Azure Pipelines", "a@p.example"), ("AppVeyor", "a@v.example"), ("Some Name", "jenkins@build-server.example"),
+    ("renovate[bot]", "r@b.example"), ("pre-commit-ci", "p@c.example"),
+])
+def test_ci_accounts_are_bots(name: str, email: str) -> None:
+    assert is_bot(name, email)
+
+
+@pytest.mark.parametrize("name, email", [("Jenkins Smith", "jsmith@corp.example"), ("Drew Travis", "drew@t.example"),
+                                         ("Ana Quintero", "ana@quintero.example")])
+def test_people_named_like_ci_services_are_people(name: str, email: str) -> None:
+    assert not is_bot(name, email)
+
+
+def test_one_shared_address_joins_two_people(make_repo: MakeRepo) -> None:
+    """Documented in the README: an address is an identity, even when two people shared it."""
+    repo = make_repo()
+    repo.commit({"a.py": lines("a", 3)}, author=("Ana Real", "dev@localhost.example"), when=iso(T0))
+    repo.commit({"b.py": lines("b", 2)}, author=("Bob Other", "dev@localhost.example"), when=iso(T0 + DAY))
+    assert [p.lines for p in ledger_of(repo.path).people] == [5]
+
+
+def test_the_elder_knows_whose_line_it_is(make_repo: MakeRepo) -> None:
+    repo = make_repo()
+    _threshold_repo(repo)
+    ledger = ledger_of(repo.path)
+    assert ledger.elder is not None
+    assert ledger.elder.author == DARIO[0]
+    assert ledger.elder.author_key in {p.key for p in ledger.ghosts(730)}
+    assert ledger.elder.author_key not in {p.key for p in ledger.ghosts(731)}

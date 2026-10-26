@@ -36,7 +36,7 @@ from .blame import BlameOptions, BlameRun, BlamedLine, blame_all
 from .files import RULES_VERSION, Selection, select
 from .gitread import Git
 
-LEDGER_VERSION = "ledger-v1"
+LEDGER_VERSION = "ledger-v2"
 DAY = 86400
 MESSAGE_CHARS = 1200  # per commit message given to the model
 MESSAGES_TOTAL = 7000  # all of one person's messages together
@@ -49,6 +49,13 @@ GENERIC_NAMES = frozenset({
 })
 BOT_NAMES = frozenset({"dependabot", "renovate", "github-actions", "pre-commit-ci", "greenkeeper", "pyup-bot",
                        "snyk-bot", "mergify", "allcontributors", "imgbot", "web-flow"})
+# Build and CI services commit under names like these; their commits are not a person's work.
+CI_ACCOUNTS = ("jenkins", "travis", "travis ci", "travis-ci", "circleci", "circle ci", "buildbot", "github actions",
+               "github-actions", "gitlab ci", "gitlab-ci", "azure pipelines", "azure-pipelines", "appveyor",
+               "pre-commit", "pre-commit-ci", "renovate", "dependabot", "greenkeeper", "semantic-release",
+               "release-please", "codecov", "coveralls", "teamcity", "bamboo", "drone", "buildkite", "bitrise",
+               "cirrus ci", "cirrus-ci", "netlify", "vercel", "heroku", "readthedocs", "weblate", "transifex",
+               "crowdin")
 FORMATTING = re.compile(r"\b(re-?format\w*|black|autopep8|yapf|isort|prettier|clang-format|gofmt|rustfmt|"
                         r"ruff format|code style|formatting|whitespace|indentation|pep ?8|tabs to spaces|"
                         r"trailing spaces|line endings|crlf)\b", re.I)
@@ -115,9 +122,19 @@ def fold(text: str) -> str:
 
 
 def is_bot(name: str, email: str) -> bool:
-    low_name, low_email = name.casefold(), email.casefold()
-    return ("[bot]" in low_name or "[bot]" in low_email or low_name in BOT_NAMES or low_name.endswith("-bot")
-            or low_name.endswith(" bot"))
+    """Bots and CI accounts: a ``[bot]`` marker, a name in ``BOT_NAMES``, a name ending in "bot",
+    or a name or address local part that is one of ``CI_ACCOUNTS`` (with or without "ci", "bot",
+    "build" or a number after it)."""
+    low_name, low_email = " ".join(name.casefold().split()), email.casefold()
+    if ("[bot]" in low_name or "[bot]" in low_email or low_name in BOT_NAMES or low_name.endswith("-bot")
+            or low_name.endswith(" bot")):
+        return True
+    local = low_email.split("@", 1)[0]
+    for account in CI_ACCOUNTS:
+        pattern = rf"^{re.escape(account)}(?:[ ._-]?(?:ci|bot|build|builds|server|agent|\d+))?$"
+        if re.match(pattern, low_name) or re.match(pattern, local):
+            return True
+    return False
 
 
 def name_can_merge(name: str) -> bool:
@@ -172,6 +189,7 @@ class LineFact:
     date: str
     author: str = ""
     subject: str = ""
+    author_key: str = ""
 
 
 @dataclass
@@ -309,7 +327,7 @@ def build(repo_label: str, commit: str, selection: Selection, blame: BlameRun, c
                     oldest[key] = (rank, fact)
                 if elder is None or rank < elder[0]:
                     elder = (rank, LineFact(path, line.number, _clip(line.text), c.oid, c.author_date,
-                                            author=c.name, subject=c.subject))
+                                            author=c.name, subject=c.subject, author_key=key))
 
     people: list[Person] = []
     for key, count in lines_by_person.items():
@@ -446,12 +464,15 @@ def read_ledger(git: Git, rev: str = "HEAD", *, options: BlameOptions | None = N
     if cache_dir is not None:
         cached = load_cached(cache_dir, key)
         if cached is not None:
+            cached.repo = repo_label(git)  # the same commit can live in a clone with another name
             return cached
     selection = select(git, commit)
     blame = blame_all(git, commit, selection.kept, options, jobs=jobs, progress=progress)
     commits = read_log(git, commit)
     ledger = build(repo_label(git), commit, selection, blame, commits, options, shallow=shallow,
                    name_merge=name_merge)
-    if cache_dir is not None:
+    # Facts read with objects missing (a partial clone) or a file git could not blame are not
+    # the facts of this commit, so they are never cached: a complete clone must not inherit them.
+    if cache_dir is not None and not selection.skipped.get("unreadable") and not blame.failed:
         save_cached(cache_dir, key, ledger)
     return ledger
