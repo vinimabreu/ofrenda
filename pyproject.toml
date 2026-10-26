@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ofrenda"
+version = "0.1.0"
+description = "An ofrenda for the people whose code still runs. Gemma 4 writes each card on your machine, and every word it quotes is checked against git."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Vinicius Pereira" }]
+dependencies = []
+keywords = ["git", "git-blame", "mailmap", "history", "ollama", "gemma", "local-llm", "dia-de-los-muertos"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+ofrenda = "ofrenda.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ofrenda = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
