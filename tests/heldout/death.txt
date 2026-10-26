@@ -1,0 +1,49 @@
+# Held-out death and mourning paraphrases. Written on 2026-10-26 BEFORE the word list in
+# src/ofrenda/cards.py was widened, and never used to build or tune it. Each line is a whole
+# sentence; {name} is replaced by the person on the card. The measurement reports how many of
+# these the check rejects, whatever that number is.
+{name} crossed over, and their retry code still runs.
+{name} is no longer among the living, but their code still runs.
+{name} kicked the bucket, yet their code still runs.
+{name} bought the farm long before this code stopped running.
+{name} is pushing up daisies while their code still runs.
+{name} was taken from us, and their code still runs.
+{name} succumbed, but their code still runs.
+{name} met their maker, and their code still runs.
+{name} breathed their final breath, yet their code still runs.
+{name} is at peace now, and their code still runs.
+{name} was called home, and their code still runs.
+{name} joined the choir invisible, but their code still runs.
+{name} shuffled off this mortal coil, and their code still runs.
+{name} is six feet under, yet their code still runs.
+{name} went to a better place, and their code still runs.
+{name} has gone to meet the ancestors, and their code still runs.
+They honor {name}, who is with the ancestors now, and whose code still runs.
+{name} watches over the code from above.
+{name} left this world, and their code still runs.
+{name} is survived by the code they wrote.
+{name} wrote this code before the end came for them.
+Their code outlasted {name}.
+{name} rests beside the old scheduler code.
+The memory of {name} lives in this code.
+{name}, gone to glory, still keeps the jobs running.
+{name} has flatlined, but their retries keep going.
+{name} is with the saints now, and their code still runs.
+{name} drew their last breath, and their code still runs.
+{name} expired, but their code still runs.
+{name} perished, but their code still runs.
+{name} was cut down in their prime, and their code still runs.
+{name} is resting in the churchyard while their code runs.
+{name} se nos fue, pero su código sigue corriendo.
+{name} partió de este mundo, y su código sigue corriendo.
+{name} ya no está entre nosotros, pero su código sigue corriendo.
+{name} está en el cielo, y su código sigue corriendo.
+{name} murió, pero su código sigue corriendo.
+Que Dios tenga en su gloria a {name}, cuyo código sigue corriendo.
+{name} nos dejó para siempre, pero su código sigue.
+{name} nos deixou, mas o código continua rodando.
+{name} partiu desta para melhor, e o código continua rodando.
+{name} está no céu agora, e o código continua rodando.
+{name} bateu as botas, mas o código continua rodando.
+{name} descansa no Senhor, e o código continua rodando.
+{name} virou estrela, e o código continua rodando.

@@ -1,0 +1,28 @@
+# Held-out insults and put-downs. Written on 2026-10-26 BEFORE the judgment word list in
+# src/ofrenda/cards.py existed, and never used to build or tune it. {name} is the person.
+{name} wrote code that nobody could read.
+{name} left a mess for everyone after them.
+{name} was a poor programmer who added retries.
+{name} never understood how the scheduler worked.
+{name} wrote spaghetti that still runs.
+{name}'s retry code is an embarrassment.
+{name} cut corners everywhere in the retry code.
+{name} hacked together the retries without thinking.
+{name} was a mediocre contributor.
+{name} only wrote unfinished retry logic.
+{name} copied the retry code from somewhere else.
+{name} wrote the worst retry logic in the project.
+{name} was a weak engineer who added backoff.
+{name}'s code is a disaster waiting to happen.
+{name} was clueless about time zones.
+{name} wrote dumb retry code.
+{name} made a terrible mistake in the retry logic.
+{name} wrote ugly code that still runs.
+{name} was arrogant about their retry design.
+{name} wrote broken, unreadable retries.
+{name} was a nightmare to work with.
+{name} shipped garbage that still runs.
+{name} escribió código malísimo.
+{name} era un programador pésimo.
+{name} escreveu um código porco.
+{name} era preguiçoso e descuidado.

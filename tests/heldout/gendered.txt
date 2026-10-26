@@ -1,0 +1,22 @@
+# Held-out gendered wording without pronouns. Written on 2026-10-26 BEFORE the gendered word
+# list in src/ofrenda/cards.py existed, and never used to build or tune it. {name} is the person.
+Mister {name} made failed jobs retry.
+Madame {name} made failed jobs retry.
+{name}, a fine fellow, made failed jobs retry.
+{name} was a stand-up chap who made jobs retry.
+The lads thank {name} for the retries.
+{name} was the father of the retry logic.
+{name} was the mother of the scheduler's time zones.
+{name}, a family man, made failed jobs retry.
+{name} showed real manly courage in the retry code.
+{name} was a brotherly presence in the project.
+{name}, the scheduler's queen, made failed jobs retry.
+{name} was everyone's favorite uncle in the project.
+Señor {name} hizo que los trabajos fallidos se reintenten.
+{name}, nossa rainha do agendador, fez os jobs repetirem.
+{name} era o paizão do projeto.
+{name} was a sweet girl who added retries.
+{name} was the grandmother of this scheduler.
+{name} was a gentlewoman of the code.
+{name} acted like a big brother to the retry code.
+{name} was the godfather of the retries.
