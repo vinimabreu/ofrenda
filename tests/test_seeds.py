@@ -33,10 +33,27 @@ def test_every_seed_kind_is_made() -> None:
     assert {"quote-word-swapped", "quote-word-dropped", "quote-word-added", "quote-case-changed", "quote-homoglyph",
             "quote-joined-across-messages", "quote-from-someone-else", "quote-invented", "quotes-missing",
             "sentence-digit", "sentence-hash", "sentence-path", "sentence-death-passed-away", "sentence-death-rip",
-            "sentence-pronoun", "sentence-invented-name", "sentence-embedded-quote"} <= kinds
+            "sentence-pronoun", "sentence-invented-name", "sentence-embedded-quote", "sentence-number-word",
+            "sentence-judgment", "sentence-gendered-noun", "sentence-single-quoted-invented",
+            "sentence-guillemets-invented", "sentence-invented-name-first", "sentence-gendered-title",
+            "quote-starts-inside-a-word", "quote-word-and-symbol"} <= kinds
 
 
 def test_no_seed_gets_through() -> None:
     report = measure([(ANSWER, MATERIAL), (OTHER_ANSWER, OTHER_MATERIAL)])
     assert report.answers == 2 and report.seeds >= 40
     assert report.passed == 0, report.leaks
+
+
+def test_the_held_out_measurement_counts_rejections_and_their_reason() -> None:
+    from pathlib import Path
+
+    from ofrenda.tamper import measure_heldout, read_heldout
+    heldout = Path(__file__).resolve().parent / "heldout"
+    death = read_heldout(heldout / "death.txt")
+    report = measure_heldout(death, [(ANSWER, MATERIAL), (OTHER_ANSWER, OTHER_MATERIAL)], "as if the person died")
+    assert report.sentences == 45 and report.trials == 90
+    assert report.intended <= report.rejected <= report.trials
+    assert report.always_rejected + report.never_rejected <= report.sentences
+    plain = measure_heldout(["{name} made the dashboard draw at once."], [(OTHER_ANSWER, OTHER_MATERIAL)], "x")
+    assert plain.rejected == 0 and plain.never_rejected == 1

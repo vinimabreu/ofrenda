@@ -5,7 +5,10 @@
 Run after ``scripts/measure.py``: it reads the facts and the model's replies from
 that run's cache (no model call here), keeps every answer that passed the check,
 breaks each one in every way ``ofrenda.tamper`` knows, and counts how many of the
-broken answers still pass. The target is zero. Seeds that got through, if any, go
+broken answers still pass. The target is zero. It also puts every sentence of the
+held-out sets in ``tests/heldout`` (written before the word lists, never added to
+them) on each of those people, with their real quotes, and counts how many the
+check rejects. That number is reported as it comes out. Seeds that got through, if any, go
 to RAW_DIR (they hold real names); ``--out`` gets counts only.
 """
 
@@ -23,7 +26,9 @@ from ofrenda.cards import (Answer, Material, ReplyCache, check_card, material_fo
                            prompt_for, reply_key, retry_prompt)
 from ofrenda.gitread import Git  # noqa: E402
 from ofrenda.ledger import read_ledger  # noqa: E402
-from ofrenda.tamper import measure  # noqa: E402
+from ofrenda.tamper import INTENDED, measure, measure_heldout, read_heldout  # noqa: E402
+
+HELDOUT = ROOT / "tests" / "heldout"
 
 
 def passing_answers(clone: Path, cache: Path, model: str, top: int) -> list[tuple[Answer, Material]]:
@@ -63,14 +68,22 @@ def main() -> int:
     for clone in args.clones:
         pairs += passing_answers(clone, args.cache / clone.name.removesuffix(".git"), args.model, args.top)
     report = measure(pairs)
+    heldout = {}
+    for name, intended in INTENDED.items():
+        result = measure_heldout(read_heldout(HELDOUT / f"{name}.txt"), pairs, intended)
+        heldout[name] = {"sentences": result.sentences, "trials": result.trials, "rejected": result.rejected,
+                         "rejected_for_this_reason": result.intended,
+                         "rejected_for_every_answer": result.always_rejected, "never_rejected": result.never_rejected}
     data = {"model": args.model, "answers": report.answers, "seeds": report.seeds, "passed_the_check": report.passed,
-            "by_kind": {kind: {"seeds": n, "passed": p} for kind, (n, p) in sorted(report.by_kind.items())}}
+            "by_kind": {kind: {"seeds": n, "passed": p} for kind, (n, p) in sorted(report.by_kind.items())},
+            "heldout": heldout}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
     args.raw.mkdir(parents=True, exist_ok=True)
     (args.raw / "seed-leaks.json").write_text(json.dumps(report.leaks, indent=1, ensure_ascii=False) + "\n",
                                              encoding="utf-8")
-    print(f"answers {report.answers}, seeds {report.seeds}, passed the check {report.passed}", file=sys.stderr)
+    print(f"answers {report.answers}, seeds {report.seeds}, passed the check {report.passed}; held-out "
+          + ", ".join(f"{k} {v['rejected']}/{v['trials']}" for k, v in heldout.items()), file=sys.stderr)
     return 0
 
 

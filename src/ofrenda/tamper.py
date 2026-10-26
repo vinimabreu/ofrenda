@@ -13,6 +13,7 @@ import random
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from .cards import Answer, Material, check_card, squash
 
@@ -33,7 +34,17 @@ SENTENCE_INSERTS = {
     "death-haunt": " and still haunt the code",
     "pronoun": " with his own tests",
     "invented-name": " for the Kubernetes operators",
+    "number-word": " in fifteen places",
+    "judgment": ", sloppily",
+    "gendered-noun": ", a true gentleman",
+    "single-quoted-invented": " and wrote 'Rewrite everything from scratch'",
+    "guillemets-invented": " and wrote \u00abRewrite everything from scratch\u00bb",
 }
+SENTENCE_PREFIXES = {
+    "invented-name-first": "Google says ",
+    "gendered-title": "Mr. ",
+}
+INTENDED = {"death": "as if the person died", "judgment": "judges the person", "gendered": "gender"}
 
 
 @dataclass(frozen=True)
@@ -50,6 +61,10 @@ def _in_messages(quote: str, material: Material) -> bool:
 def _sentence_seed(answer: Answer, kind: str, insert: str) -> Seed:
     text = answer.text.rstrip(".")
     return Seed(kind, Answer(text + insert + ".", answer.quotes))
+
+
+def _prefix_seed(answer: Answer, kind: str, prefix: str) -> Seed:
+    return Seed(kind, Answer(prefix + answer.text, answer.quotes))
 
 
 def _quote_seed(answer: Answer, kind: str, index: int, quote: str) -> Seed:
@@ -81,6 +96,12 @@ def seeds_for(answer: Answer, material: Material, others: Sequence[Material] = (
             added = [*words[:1], rng.choice(vocabulary), *words[1:]]
             if not _in_messages(" ".join(added), material):
                 made.append(_quote_seed(answer, "quote-word-added", index, " ".join(added)))
+        stripped = squash(quote).strip(" \"'\u201c\u201d\u2018\u2019`")
+        if len(stripped) > 9 and stripped[0].isalpha() and stripped[1].isalpha():
+            inside = stripped[1:]  # still in the message, but starting inside a word
+            if _in_messages(inside, material):
+                made.append(_quote_seed(answer, "quote-starts-inside-a-word", index, inside))
+        made.append(_quote_seed(answer, "quote-word-and-symbol", index, f"{words[0]} &" if words else "& &"))
         flipped = quote[:1].swapcase() + quote[1:]
         if flipped != quote and not _in_messages(flipped, material):
             made.append(_quote_seed(answer, "quote-case-changed", index, flipped))
@@ -111,6 +132,10 @@ def seeds_for(answer: Answer, material: Material, others: Sequence[Material] = (
         if kind == "invented-name" and "kubernetes" in {w.casefold() for w in material.vocabulary()}:
             continue
         made.append(_sentence_seed(answer, f"sentence-{kind}", insert))
+    for kind, prefix in SENTENCE_PREFIXES.items():
+        if kind == "invented-name-first" and "google" in material.vocabulary():
+            continue
+        made.append(_prefix_seed(answer, f"sentence-{kind}", prefix))
     fabricated = next((p for p in INVENTED_QUOTES if not _in_messages(p, material)), None)
     if fabricated:
         made.append(_sentence_seed(answer, "sentence-embedded-quote", f' and wrote "{fabricated}"'))
@@ -145,4 +170,39 @@ def measure(pairs: Sequence[tuple[Answer, Material]], *, seed: int = 0) -> SeedR
                 counts[1] += 1
                 report.passed += 1
                 report.leaks.append((item.kind, item.answer.text + " | " + " / ".join(item.answer.quotes)))
+    return report
+
+
+@dataclass
+class HeldOutReport:
+    """How many held-out sentences the check rejects: at all, and for the reason the set is about."""
+    sentences: int = 0
+    trials: int = 0  # sentences times answers
+    rejected: int = 0
+    intended: int = 0
+    always_rejected: int = 0  # sentences rejected for every answer
+    never_rejected: int = 0
+
+
+def read_heldout(path: str | Path) -> list[str]:
+    lines = Path(path).read_text(encoding="utf-8").splitlines()
+    return [line for line in lines if line.strip() and not line.startswith("#")]
+
+
+def measure_heldout(templates: Sequence[str], pairs: Sequence[tuple[Answer, Material]], intended: str) -> HeldOutReport:
+    """Each template with each passing answer's person and quotes; the quotes are real, so a
+    rejection can only come from the sentence."""
+    report = HeldOutReport(sentences=len(templates))
+    usable = [(a, m) for a, m in pairs if check_card(a, m) is None]
+    for template in templates:
+        hits = 0
+        for answer, material in usable:
+            result = check_card(Answer(template.format(name=material.name), answer.quotes), material)
+            report.trials += 1
+            if result is not None:
+                hits += 1
+                report.rejected += 1
+                report.intended += intended in result
+        report.always_rejected += bool(usable) and hits == len(usable)
+        report.never_rejected += hits == 0
     return report

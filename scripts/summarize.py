@@ -96,6 +96,20 @@ def repeat_table(first: dict[str, Any], second: dict[str, Any], same: dict[str, 
     return out
 
 
+def heldout_table(data: dict[str, Any]) -> list[str]:
+    names = {"death": "death and mourning", "judgment": "judging the person", "gendered": "gendered wording"}
+    out = ["Sentences from `tests/heldout`, written before the word lists and never added to them, each put on "
+           f"every one of the {data['answers']} people above with their real quotes. Rejected for any reason, and "
+           "for the reason the set is about:", "",
+           "| held-out set | sentences | trials | rejected | for that reason | sentences never rejected |",
+           "|---|---:|---:|---:|---:|---:|"]
+    for key, v in data.get("heldout", {}).items():
+        out.append(f"| {names.get(key, key)} | {v['sentences']} | {v['trials']} | {v['rejected']} "
+                   f"({pct(v['rejected'], v['trials'])}) | {v['rejected_for_this_reason']} "
+                   f"({pct(v['rejected_for_this_reason'], v['trials'])}) | {v['never_rejected']} |")
+    return out
+
+
 def main() -> int:
     prefix = sys.argv[1]
     blame = load(Path(f"{prefix}-blame-options.json"))
@@ -108,6 +122,8 @@ def main() -> int:
     if repeat.exists() and same.exists():
         lines += ["### The same run again", "", *repeat_table(cards, load(repeat), load(same)), ""]
     lines += ["## Seeds", "", *seeds_table(seeds), ""]
+    if seeds.get("heldout"):
+        lines += ["## Held-out wording", "", *heldout_table(seeds), ""]
     print("\n".join(lines))
     return 0
 
