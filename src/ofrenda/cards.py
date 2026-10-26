@@ -11,24 +11,33 @@ or two sentences on what the person left behind and why it exists, and
 
 - every quote, whitespace aside, is copied from one of the messages the model was
   given (case and punctuation included; quote marks around it and a trailing
-  full stop are trimmed), is two words and eight characters or more and at most
+  full stop are trimmed), starts and ends on a word boundary of that message,
+  has two words with letters and eight characters or more and at most
   ``MAX_QUOTE`` characters, and there are one to three of them;
-- text inside quotation marks in the sentence is also copied from a message;
-- the sentence has no dates, amounts, commit hashes, email addresses, links,
-  file names or paths (cards print those from git, next to the sentence), and no
-  number unless it is copied with its word from a commit message (a release
-  name such as ``Python 3`` or ``Jinja2``);
-- every name in the sentence (a capitalised word that does not start a sentence,
-  or a code identifier) appears in the material the model was given, or is one of
-  a few generic computing words (``GENERIC_TERMS``);
-- the sentence uses no gendered pronoun (the card does not guess anyone's), and
-  no word that can read as if the person died (``DEATH_WORDS``): the people on an
-  ofrenda card moved on from this repository, nothing more.
+- text inside any kind of quotation marks in the sentence (straight, curly,
+  single, guillemets) is also copied from a message, and no quotation mark is
+  left open;
+- the sentence has no control characters or markup, no dates, amounts (in
+  digits or in words), commit hashes, email addresses, links, file names or paths
+  (cards print those from git, next to the sentence), and no number or amount
+  word unless the messages have it too (``Python 3``, ``Jinja2``);
+- every name in the sentence (a capitalised word, the first word of a sentence
+  included unless it is a plain starter such as "They", or a code identifier)
+  appears in the material the model was given, or is one of a few generic
+  computing words (``GENERIC_TERMS``);
+- the sentence uses none of the words in ``wording``: death and mourning words in
+  English, Spanish and Portuguese, words that judge the person, and gendered
+  pronouns, titles and nouns.
+
+Those are lists. A paraphrase that is on none of them can still pass, and so can
+a plain lowercase claim the messages do not support; ``tests/heldout`` and
+``measurements/`` say how much gets through.
 
 When the answer fails, the model is asked once more with the plain reason and
 nothing else, never with a corrected version. When that fails too, the card is
 built from git alone: the subject line of the person's top commit, quoted as it
-is. Nothing is invented on either path.
+is. No quote is invented on either path; the sentence on a card that passed can
+still say things the messages do not support.
 
 Replies are cached per model and prompt version, keyed by the revision, the
 person and the exact prompt (which holds every fact the model saw). The check
@@ -42,12 +51,14 @@ import json
 import re
 import sys
 import time
+import unicodedata
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from .ledger import CommitFact, Ledger, Person, fold, write_private, make_private_dir
+from . import wording
+from .ledger import CommitFact, Ledger, Person, fold, make_private_dir, write_private
 from .model import Ask
 
 PROMPT_ID = "cards-v1"
@@ -82,16 +93,9 @@ SYSTEM = (
     "messages and never reworded."
 )
 
-DEATH_WORDS = re.compile(
-    r"\b(rip|r\.i\.p|rests? in peace|rested in peace|pass(?:ed|es|ing)? (?:away|on)|the late|late|in (?:loving )?"
-    r"memory|in memoriam|memorial\w*|remembered|deceased|died|dies|die|dying|death\w*|dead|mourn\w*|griev\w*|"
-    r"grief|graves?|tomb\w*|funeral\w*|obituar\w*|afterlife|departed|condolence\w*|eulog\w*|perish\w*|demise|"
-    r"ghosts?|ghostly|haunt\w*|spirits?|souls?|heaven\w*|angels?|lives? on|lived on|farewell|goodbye|tribute\w*|"
-    r"(?:is|are) missed|resting)\b", re.I)
 QUOTE_DEATH_CASED = re.compile(r"\bRIP\b|\bR\.I\.P\b")
 QUOTE_DEATH = re.compile(r"rest in peace|passed away|in memory of|in memoriam|\bobituar|\bdeceased\b|\bcondolence|"
                          r"\bfuneral", re.I)
-PRONOUNS = re.compile(r"\b(he|him|his|himself|she|her|hers|herself)\b", re.I)
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 URL = re.compile(r"(https?://|ftp://|www\.)|\b[\w-]+\.(?:com|org|net|io|dev|edu|gov|co)\b", re.I)
 PATH = re.compile(r"[\w.-]+/[\w.-]+|\\[\w.-]+|\b[\w-]+\.(?:py|pyi|js|mjs|ts|tsx|jsx|rb|go|rs|java|kt|c|h|cc|cpp|"
@@ -99,12 +103,20 @@ PATH = re.compile(r"[\w.-]+/[\w.-]+|\\[\w.-]+|\b[\w-]+\.(?:py|pyi|js|mjs|ts|tsx|
                   r"po|pot|swift|m|mm|pl|lua|r)\b", re.I)
 HASH = re.compile(r"\b[0-9a-f]{7,64}\b", re.I)
 DIGIT = re.compile(r"\d")
-AMOUNTS = re.compile(
-    r"\b(years?|decades?|centur(?:y|ies)|months?|weeks?|ago|annual\w*|two|three|four|five|six|seven|eight|nine|ten|"
-    r"eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundreds?|thousands?|millions?|"
-    r"billions?|dozens?)\b", re.I)
-MONTHS = re.compile(r"\b(January|February|March|April|June|July|August|September|October|November|December)\b")
-QUOTED = re.compile(r"[\"\u201c\u201d]([^\"\u201c\u201d]{2,})[\"\u201c\u201d]")
+# Text in quotation marks: straight and curly double quotes, curly single quotes, straight single
+# quotes that open after a non-letter and close before one (so "it's" is not a quote), guillemets
+# and low quotes.
+QUOTED_SPANS = (
+    re.compile(r'"([^"]{2,}?)"'),
+    re.compile("\u201c([^\u201c\u201d]{2,}?)\u201d"),
+    re.compile("\u2018([^\u2018\u2019]{2,}?)\u2019(?!\\w)"),
+    re.compile(r"(?<!\w)'([^']{2,}?)'(?!\w)"),
+    re.compile("\u00ab\\s*([^\u00ab\u00bb]{2,}?)\\s*\u00bb"),
+    re.compile("\u2039\\s*([^\u2039\u203a]{2,}?)\\s*\u203a"),
+    re.compile("\u201e([^\u201e\u201c\u201d]{2,}?)[\u201c\u201d]"),
+)
+PAIRS = (("\u201c", "\u201d"), ("\u00ab", "\u00bb"), ("\u2039", "\u203a"))
+CONTROL = re.compile(r"[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f\u2028-\u202e\u2066-\u2069\ufeff<>]")
 IDENTIFIER = re.compile(r"`([^`]+)`")
 GENERIC_TERMS = frozenset({
     "i", "api", "apis", "http", "https", "url", "urls", "json", "xml", "html", "css", "cli", "sql", "ui", "os",
@@ -213,10 +225,45 @@ def find_quote(quote: str, messages: Sequence[CommitFact]) -> Quote | None:
     tries = [raw, raw.strip(TRIM)]
     tries.append(tries[-1].rstrip(".,;:!"))
     for candidate in dict.fromkeys(t for t in tries if t):
+        pattern = re.compile(("(?<!\\w)" if _wordish(candidate[0]) else "") + re.escape(candidate)
+                             + ("(?!\\w)" if _wordish(candidate[-1]) else ""))
         for message in messages:
-            if candidate in squash(message.message):
+            if pattern.search(squash(message.message)):
                 return Quote(candidate, message.oid, message.date)
     return None
+
+
+def _wordish(char: str) -> bool:
+    return char.isalnum() or char == "_"
+
+
+def word_count(text: str) -> int:
+    """Words that have a letter in them: "&" and "--" are not words."""
+    return sum(1 for token in text.split() if any(c.isalpha() for c in token))
+
+
+def quoted_spans(text: str) -> list[str]:
+    spans: list[str] = []
+    for pattern in QUOTED_SPANS:
+        spans += [m.group(1) for m in pattern.finditer(text)]
+    return spans
+
+
+def without_quotes(text: str) -> str:
+    for pattern in QUOTED_SPANS:
+        text = pattern.sub(" ", text)
+    return text
+
+
+def open_quote(text: str) -> bool:
+    """True when a quotation mark in ``text`` is never closed."""
+    if text.count('"') % 2:
+        return True
+    if any(text.count(left) != text.count(right) for left, right in PAIRS):
+        return True
+    opening = len(re.findall(r"(?<!\w)'(?=\w)", text)) + text.count("\u2018")
+    closing = len(re.findall(r"(?<=[\w.,!?])'(?!\w)", text)) + len(re.findall("\u2019(?!\\w)", text))
+    return opening > closing
 
 
 ABBREVIATIONS = frozenset({"e.g", "i.e", "etc", "vs", "mr", "mrs", "ms", "dr", "jr", "sr", "st", "no", "cf"})
@@ -263,20 +310,23 @@ def _ungrounded_number(text: str, material: Material) -> str | None:
 
 
 def _names_in(text: str) -> list[str]:
-    """Words that name something: capitalised and not the first word of a sentence, written in
-    camelCase or snake_case, or code in backticks. Text in quotation marks is left out (it is
-    checked as a quote)."""
+    """Words that name something: capitalised (the first word of a sentence too, unless it is a
+    plain starter such as "They"), written in camelCase or snake_case, or code in backticks. Text
+    in quotation marks is left out (it is checked as a quote)."""
     found = [m.group(1) for m in IDENTIFIER.finditer(text)]
-    plain = IDENTIFIER.sub(" ", QUOTED.sub(" ", text))
+    plain = IDENTIFIER.sub(" ", without_quotes(text))
     for sentence in _sentences(plain):
         for position, word in enumerate(re.findall(r"[^\W\d][\w'\u2019-]*", sentence)):
             word = re.sub(r"['\u2019]s$", "", word).strip("'\u2019-")
+            if not word:
+                continue
             if "_" in word.strip("_"):
                 found.append(word)
                 continue
             for index, part in enumerate(p for p in word.split("-") if p):
                 camel = any(c.isupper() for c in part[1:]) and any(c.islower() for c in part)
-                if camel or (part[0].isupper() and (position > 0 or index > 0)):
+                starter = position == 0 and index == 0 and part.casefold() in wording.STARTERS
+                if camel or (part[0].isupper() and not starter):
                     found.append(part)
     return found
 
@@ -290,6 +340,11 @@ def reads_as_death(quote: str) -> bool:
     return bool(QUOTE_DEATH_CASED.search(quote) or QUOTE_DEATH.search(quote))
 
 
+def _has_number(text: str) -> bool:
+    """A digit, or any other character with a numeric value (a superscript two, a Roman numeral)."""
+    return any(unicodedata.numeric(c, None) is not None for c in text)
+
+
 def check_card(answer: Answer, material: Material) -> str | None:
     """None when the answer can go on the card, else the plain reason it can't."""
     if answer.error:
@@ -299,8 +354,20 @@ def check_card(answer: Answer, material: Material) -> str | None:
         return "the sentence is empty"
     if len(text) > MAX_TEXT:
         return f"the sentence is longer than {MAX_TEXT} characters"
+    if CONTROL.search(text):
+        return "the sentence carries control characters or markup"
     if len(_sentences(text)) > 2:
         return "the text is more than two sentences"
+    death = wording.death_word(text, material.name)
+    if death:
+        return f'the sentence uses "{death}", which can read as if the person died'
+    judged = wording.judgment_word(text, material.name)
+    if judged:
+        return f'the sentence uses "{judged}", which judges the person'
+    gendered = wording.gendered_word(text, material.name)
+    if gendered:
+        return (f'the sentence uses "{gendered}"; the card does not guess anyone\'s gender, '
+                "so it says their name or they")
     if EMAIL.search(text):
         return "the sentence carries an email address"
     if URL.search(text):
@@ -311,26 +378,22 @@ def check_card(answer: Answer, material: Material) -> str | None:
         return "the sentence carries a file name or a path"
     if any(_is_hash(m.group(0)) for m in HASH.finditer(text)):
         return "the sentence carries a commit hash"
-    if DIGIT.search(text) and _ungrounded_number(text, material):
+    if _has_number(text) and (any(c not in "0123456789" and unicodedata.numeric(c, None) is not None for c in text)
+                              or _ungrounded_number(text, material)):
         return "the sentence carries a number"
-    amount = AMOUNTS.search(text) or MONTHS.search(text)
+    amount = wording.ungrounded_amount(text, [m.message for m in material.messages])
     if amount:
-        return f'the sentence carries a date or an amount ("{amount.group(0)}")'
-    death = DEATH_WORDS.search(text)
-    if death:
-        return f'the sentence uses "{death.group(0)}", which can read as if the person died'
-    pronoun = PRONOUNS.search(text)
-    if pronoun:
-        return f'the sentence uses "{pronoun.group(0)}"; the card refers to the person by name or as they'
-    for inner in QUOTED.findall(text):
+        return f'the sentence carries a date or an amount ("{amount}")'
+    if open_quote(text):
+        return "the sentence opens a quotation mark and never closes it"
+    for inner in quoted_spans(text):
         if find_quote(inner, material.messages) is None:
             return f'the sentence quotes "{squash(inner)}", which is not in their commit messages'
     vocabulary = material.vocabulary()
     for name in _names_in(text):
-        folded = fold(name)
-        if folded in GENERIC_TERMS or folded in vocabulary:
+        if any(variant in GENERIC_TERMS or variant in vocabulary for variant in wording.stems(fold(name))):
             continue
-        parts = [p for p in re.split(r"[\W_]+", folded) if p]
+        parts = [p for p in re.split(r"[\W_]+", fold(name)) if p]
         if parts and all(p in vocabulary or p in GENERIC_TERMS for p in parts):
             continue
         return f'the sentence names "{name}", which is not in their commit messages or files'
@@ -344,7 +407,7 @@ def check_card(answer: Answer, material: Material) -> str | None:
             return "one of the quotes is empty"
         if len(shown) > MAX_QUOTE:
             return f"a quote is longer than {MAX_QUOTE} characters"
-        if len(shown.split()) < 2 or len(shown) < 8:
+        if word_count(shown) < 2 or len(shown) < 8:
             return f'the quote "{shown}" is too short to stand on its own'
         if find_quote(quote, material.messages) is None:
             return f'the quote "{shown}" is not in any of their commit messages'

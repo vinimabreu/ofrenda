@@ -39,7 +39,7 @@ def ledger(*people: Person) -> Ledger:
 
 MATERIAL = Material("Celia Mbeki", "lantern", (M1, M2), ("src/sessions.py", "src/blueprints.py"), "src/sessions.py",
                     ("class SessionInterface:",))
-GOOD = Answer("Celia Mbeki made sessions pluggable and let one blueprint live inside another.",
+GOOD = Answer("Celia Mbeki made sessions pluggable and let a blueprint live inside another.",
               ("Add the session interface", "register another blueprint under its own prefix"))
 
 
@@ -111,8 +111,8 @@ def test_more_than_three_quotes_are_rejected() -> None:
     ("Celia Mbeki died after writing sessions.", "as if the person died"),
     ("Her session code lives on in this repository.", "as if the person died"),
     ("Celia Mbeki removed dead code from sessions.", "as if the person died"),
-    ("Celia Mbeki wrote sessions and his blueprints.", "the card refers to the person by name or as they"),
-    ("She made sessions pluggable.", "the card refers to the person by name or as they"),
+    ("Celia Mbeki wrote sessions and his blueprints.", "does not guess anyone's gender"),
+    ("She made sessions pluggable.", "does not guess anyone's gender"),
     ("Celia Mbeki made sessions pluggable in Django style.", 'names "Django"'),
     ("Celia Mbeki added the SessionManager and nested blueprints.", 'names "SessionManager"'),
     ('Celia Mbeki wanted "a faster router" for blueprints.', 'quotes "a faster router"'),
