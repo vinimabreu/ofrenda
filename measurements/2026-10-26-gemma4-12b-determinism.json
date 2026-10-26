@@ -1,0 +1,18 @@
+{
+ "bottle": {
+  "cards": 10,
+  "identical": 10
+ },
+ "flask": {
+  "cards": 10,
+  "identical": 10
+ },
+ "paramiko": {
+  "cards": 10,
+  "identical": 10
+ },
+ "requests": {
+  "cards": 10,
+  "identical": 10
+ }
+}

@@ -1,0 +1,96 @@
+{
+ "model": "gemma4:12b",
+ "answers": 38,
+ "seeds": 1164,
+ "passed_the_check": 0,
+ "by_kind": {
+  "quote-case-changed": {
+   "seeds": 105,
+   "passed": 0
+  },
+  "quote-from-someone-else": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "quote-homoglyph": {
+   "seeds": 105,
+   "passed": 0
+  },
+  "quote-invented": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "quote-joined-across-messages": {
+   "seeds": 35,
+   "passed": 0
+  },
+  "quote-word-added": {
+   "seeds": 105,
+   "passed": 0
+  },
+  "quote-word-dropped": {
+   "seeds": 101,
+   "passed": 0
+  },
+  "quote-word-swapped": {
+   "seeds": 105,
+   "passed": 0
+  },
+  "quotes-missing": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-death-haunt": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-death-in-memory": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-death-passed-away": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-death-rip": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-digit": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-email": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-embedded-quote": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-hash": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-invented-name": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-link": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-path": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-pronoun": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-year": {
+   "seeds": 38,
+   "passed": 0
+  }
+ }
+}

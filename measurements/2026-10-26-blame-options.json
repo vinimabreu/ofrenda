@@ -1,0 +1,767 @@
+{
+ "cpu_count": 18,
+ "default_jobs": 8,
+ "repeats": 3,
+ "repos": [
+  {
+   "repo": "flask",
+   "commit": "d086db856be187255b8ec61ef409357393020f32",
+   "commits_reachable": 5562,
+   "files_kept": 226,
+   "variants": {
+    "plain": {
+     "seconds_median": 1.392,
+     "seconds_all": [
+      1.392,
+      1.483,
+      1.375
+     ],
+     "seconds_one_job": 5.627,
+     "jobs": 8,
+     "lines": 34635,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 399,
+     "moved_on_730": 378,
+     "top10_moved_on_lines": [
+      5025,
+      2547,
+      1994,
+      1420,
+      534,
+      309,
+      288,
+      249,
+      209,
+      200
+     ]
+    },
+    "-w": {
+     "seconds_median": 1.394,
+     "seconds_all": [
+      1.379,
+      1.394,
+      1.396
+     ],
+     "seconds_one_job": 5.74,
+     "jobs": 8,
+     "lines": 34635,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 405,
+     "moved_on_730": 383,
+     "top10_moved_on_lines": [
+      5851,
+      2561,
+      2005,
+      526,
+      504,
+      322,
+      292,
+      291,
+      250,
+      209
+     ],
+     "lines_to_another_commit_vs_plain": 2284,
+     "lines_to_another_person_vs_plain": 1839,
+     "moved_on_gained_vs_plain": 9,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M": {
+     "seconds_median": 1.414,
+     "seconds_all": [
+      1.402,
+      1.433,
+      1.414
+     ],
+     "seconds_one_job": 6.002,
+     "jobs": 8,
+     "lines": 34635,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 410,
+     "moved_on_730": 388,
+     "top10_moved_on_lines": [
+      6060,
+      2563,
+      2041,
+      573,
+      516,
+      314,
+      301,
+      281,
+      250,
+      217
+     ],
+     "lines_to_another_commit_vs_plain": 3066,
+     "lines_to_another_person_vs_plain": 2435,
+     "moved_on_gained_vs_plain": 15,
+     "moved_on_lost_vs_plain": 5
+    },
+    "-w -M ignore-revs": {
+     "seconds_median": 1.423,
+     "seconds_all": [
+      1.423,
+      1.426,
+      1.422
+     ],
+     "seconds_one_job": 6.002,
+     "jobs": 8,
+     "lines": 34635,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 410,
+     "moved_on_730": 388,
+     "top10_moved_on_lines": [
+      6060,
+      2563,
+      2041,
+      573,
+      516,
+      314,
+      301,
+      281,
+      250,
+      217
+     ],
+     "lines_to_another_commit_vs_plain": 3066,
+     "lines_to_another_person_vs_plain": 2435,
+     "moved_on_gained_vs_plain": 15,
+     "moved_on_lost_vs_plain": 5
+    },
+    "-w -M -C ignore-revs (default)": {
+     "seconds_median": 1.903,
+     "seconds_all": [
+      1.89,
+      1.905,
+      1.903
+     ],
+     "seconds_one_job": 8.69,
+     "jobs": 8,
+     "lines": 34635,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 437,
+     "moved_on_730": 415,
+     "top10_moved_on_lines": [
+      6507,
+      2188,
+      1436,
+      534,
+      488,
+      467,
+      333,
+      320,
+      254,
+      177
+     ],
+     "lines_to_another_commit_vs_plain": 5304,
+     "lines_to_another_person_vs_plain": 4212,
+     "moved_on_gained_vs_plain": 42,
+     "moved_on_lost_vs_plain": 5
+    },
+    "-w -M -C -C ignore-revs": {
+     "seconds_median": 2.174,
+     "seconds_all": [
+      2.232,
+      2.174,
+      2.163
+     ],
+     "seconds_one_job": 10.968,
+     "jobs": 8,
+     "lines": 34635,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 436,
+     "moved_on_730": 414,
+     "top10_moved_on_lines": [
+      6531,
+      2188,
+      1439,
+      539,
+      488,
+      458,
+      333,
+      320,
+      254,
+      177
+     ],
+     "lines_to_another_commit_vs_plain": 5432,
+     "lines_to_another_person_vs_plain": 4232,
+     "moved_on_gained_vs_plain": 41,
+     "moved_on_lost_vs_plain": 5
+    }
+   }
+  },
+  {
+   "repo": "requests",
+   "commit": "3c7baaa05ab4aa49cc819ce3a819d260de19c157",
+   "commits_reachable": 6496,
+   "files_kept": 119,
+   "variants": {
+    "plain": {
+     "seconds_median": 0.681,
+     "seconds_all": [
+      0.697,
+      0.681,
+      0.681
+     ],
+     "seconds_one_job": 2.736,
+     "jobs": 8,
+     "lines": 19461,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 471,
+     "moved_on_730": 439,
+     "top10_moved_on_lines": [
+      4697,
+      1184,
+      387,
+      195,
+      174,
+      155,
+      140,
+      123,
+      121,
+      112
+     ]
+    },
+    "-w": {
+     "seconds_median": 0.706,
+     "seconds_all": [
+      0.706,
+      0.708,
+      0.703
+     ],
+     "seconds_one_job": 2.792,
+     "jobs": 8,
+     "lines": 19461,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 471,
+     "moved_on_730": 440,
+     "top10_moved_on_lines": [
+      4743,
+      1160,
+      388,
+      207,
+      174,
+      165,
+      142,
+      122,
+      121,
+      113
+     ],
+     "lines_to_another_commit_vs_plain": 1004,
+     "lines_to_another_person_vs_plain": 539,
+     "moved_on_gained_vs_plain": 11,
+     "moved_on_lost_vs_plain": 10
+    },
+    "-w -M": {
+     "seconds_median": 0.808,
+     "seconds_all": [
+      0.804,
+      0.808,
+      0.809
+     ],
+     "seconds_one_job": 2.991,
+     "jobs": 8,
+     "lines": 19461,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 478,
+     "moved_on_730": 447,
+     "top10_moved_on_lines": [
+      4790,
+      1174,
+      425,
+      257,
+      174,
+      172,
+      155,
+      133,
+      121,
+      121
+     ],
+     "lines_to_another_commit_vs_plain": 1793,
+     "lines_to_another_person_vs_plain": 1103,
+     "moved_on_gained_vs_plain": 21,
+     "moved_on_lost_vs_plain": 13
+    },
+    "-w -M ignore-revs": {
+     "seconds_median": 0.847,
+     "seconds_all": [
+      0.847,
+      0.851,
+      0.842
+     ],
+     "seconds_one_job": 3.113,
+     "jobs": 8,
+     "lines": 19461,
+     "failed_files": 0,
+     "ignored_commits": 1,
+     "people_with_lines": 498,
+     "moved_on_730": 467,
+     "top10_moved_on_lines": [
+      5073,
+      1271,
+      697,
+      283,
+      198,
+      193,
+      174,
+      172,
+      168,
+      141
+     ],
+     "lines_to_another_commit_vs_plain": 4003,
+     "lines_to_another_person_vs_plain": 3041,
+     "moved_on_gained_vs_plain": 40,
+     "moved_on_lost_vs_plain": 12
+    },
+    "-w -M -C ignore-revs (default)": {
+     "seconds_median": 0.954,
+     "seconds_all": [
+      0.951,
+      0.954,
+      0.967
+     ],
+     "seconds_one_job": 3.679,
+     "jobs": 8,
+     "lines": 19461,
+     "failed_files": 0,
+     "ignored_commits": 1,
+     "people_with_lines": 501,
+     "moved_on_730": 470,
+     "top10_moved_on_lines": [
+      5095,
+      1275,
+      679,
+      281,
+      198,
+      185,
+      174,
+      170,
+      168,
+      141
+     ],
+     "lines_to_another_commit_vs_plain": 4215,
+     "lines_to_another_person_vs_plain": 3128,
+     "moved_on_gained_vs_plain": 43,
+     "moved_on_lost_vs_plain": 12
+    },
+    "-w -M -C -C ignore-revs": {
+     "seconds_median": 1.159,
+     "seconds_all": [
+      1.159,
+      1.155,
+      1.179
+     ],
+     "seconds_one_job": 5.634,
+     "jobs": 8,
+     "lines": 19461,
+     "failed_files": 0,
+     "ignored_commits": 1,
+     "people_with_lines": 503,
+     "moved_on_730": 472,
+     "top10_moved_on_lines": [
+      4946,
+      1377,
+      679,
+      281,
+      200,
+      185,
+      174,
+      170,
+      168,
+      141
+     ],
+     "lines_to_another_commit_vs_plain": 4579,
+     "lines_to_another_person_vs_plain": 3280,
+     "moved_on_gained_vs_plain": 45,
+     "moved_on_lost_vs_plain": 12
+    }
+   }
+  },
+  {
+   "repo": "bottle",
+   "commit": "aba0c1a7ee59ed851db001d100b6a792b54a94a3",
+   "commits_reachable": 1999,
+   "files_kept": 76,
+   "variants": {
+    "plain": {
+     "seconds_median": 0.315,
+     "seconds_all": [
+      0.309,
+      0.315,
+      0.321
+     ],
+     "seconds_one_job": 1.47,
+     "jobs": 8,
+     "lines": 13894,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 154,
+     "moved_on_730": 141,
+     "top10_moved_on_lines": [
+      91,
+      74,
+      44,
+      39,
+      36,
+      30,
+      27,
+      25,
+      25,
+      24
+     ]
+    },
+    "-w": {
+     "seconds_median": 0.329,
+     "seconds_all": [
+      0.324,
+      0.329,
+      0.338
+     ],
+     "seconds_one_job": 1.673,
+     "jobs": 8,
+     "lines": 13894,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 155,
+     "moved_on_730": 142,
+     "top10_moved_on_lines": [
+      87,
+      75,
+      45,
+      43,
+      39,
+      30,
+      26,
+      26,
+      24,
+      23
+     ],
+     "lines_to_another_commit_vs_plain": 860,
+     "lines_to_another_person_vs_plain": 184,
+     "moved_on_gained_vs_plain": 4,
+     "moved_on_lost_vs_plain": 3
+    },
+    "-w -M": {
+     "seconds_median": 0.565,
+     "seconds_all": [
+      0.596,
+      0.564,
+      0.565
+     ],
+     "seconds_one_job": 1.87,
+     "jobs": 8,
+     "lines": 13894,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 154,
+     "moved_on_730": 142,
+     "top10_moved_on_lines": [
+      89,
+      75,
+      44,
+      43,
+      39,
+      30,
+      27,
+      26,
+      25,
+      24
+     ],
+     "lines_to_another_commit_vs_plain": 1357,
+     "lines_to_another_person_vs_plain": 256,
+     "moved_on_gained_vs_plain": 5,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M ignore-revs": {
+     "seconds_median": 0.552,
+     "seconds_all": [
+      0.575,
+      0.547,
+      0.552
+     ],
+     "seconds_one_job": 1.867,
+     "jobs": 8,
+     "lines": 13894,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 154,
+     "moved_on_730": 142,
+     "top10_moved_on_lines": [
+      89,
+      75,
+      44,
+      43,
+      39,
+      30,
+      27,
+      26,
+      25,
+      24
+     ],
+     "lines_to_another_commit_vs_plain": 1357,
+     "lines_to_another_person_vs_plain": 256,
+     "moved_on_gained_vs_plain": 5,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M -C ignore-revs (default)": {
+     "seconds_median": 0.6,
+     "seconds_all": [
+      0.6,
+      0.588,
+      0.632
+     ],
+     "seconds_one_job": 2.363,
+     "jobs": 8,
+     "lines": 13894,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 159,
+     "moved_on_730": 147,
+     "top10_moved_on_lines": [
+      89,
+      75,
+      52,
+      44,
+      43,
+      42,
+      39,
+      30,
+      28,
+      27
+     ],
+     "lines_to_another_commit_vs_plain": 1916,
+     "lines_to_another_person_vs_plain": 422,
+     "moved_on_gained_vs_plain": 10,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M -C -C ignore-revs": {
+     "seconds_median": 0.639,
+     "seconds_all": [
+      0.616,
+      0.639,
+      0.657
+     ],
+     "seconds_one_job": 3.156,
+     "jobs": 8,
+     "lines": 13894,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 159,
+     "moved_on_730": 147,
+     "top10_moved_on_lines": [
+      89,
+      75,
+      52,
+      44,
+      42,
+      39,
+      38,
+      30,
+      28,
+      27
+     ],
+     "lines_to_another_commit_vs_plain": 1959,
+     "lines_to_another_person_vs_plain": 434,
+     "moved_on_gained_vs_plain": 10,
+     "moved_on_lost_vs_plain": 4
+    }
+   }
+  },
+  {
+   "repo": "paramiko",
+   "commit": "0e9ccb91e0f9a68f2587233d523ad7fe46e730fe",
+   "commits_reachable": 4086,
+   "files_kept": 188,
+   "variants": {
+    "plain": {
+     "seconds_median": 0.83,
+     "seconds_all": [
+      0.822,
+      0.839,
+      0.83
+     ],
+     "seconds_one_job": 3.819,
+     "jobs": 8,
+     "lines": 31810,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 129,
+     "moved_on_730": 127,
+     "top10_moved_on_lines": [
+      8681,
+      2355,
+      720,
+      675,
+      408,
+      323,
+      311,
+      276,
+      210,
+      202
+     ]
+    },
+    "-w": {
+     "seconds_median": 0.865,
+     "seconds_all": [
+      0.916,
+      0.865,
+      0.857
+     ],
+     "seconds_one_job": 4.055,
+     "jobs": 8,
+     "lines": 31810,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 130,
+     "moved_on_730": 128,
+     "top10_moved_on_lines": [
+      9282,
+      2284,
+      590,
+      567,
+      328,
+      317,
+      311,
+      274,
+      219,
+      211
+     ],
+     "lines_to_another_commit_vs_plain": 1808,
+     "lines_to_another_person_vs_plain": 1006,
+     "moved_on_gained_vs_plain": 5,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M": {
+     "seconds_median": 0.888,
+     "seconds_all": [
+      0.888,
+      0.879,
+      0.895
+     ],
+     "seconds_one_job": 4.192,
+     "jobs": 8,
+     "lines": 31810,
+     "failed_files": 0,
+     "ignored_commits": 0,
+     "people_with_lines": 132,
+     "moved_on_730": 130,
+     "top10_moved_on_lines": [
+      9751,
+      2364,
+      675,
+      580,
+      328,
+      322,
+      311,
+      270,
+      214,
+      182
+     ],
+     "lines_to_another_commit_vs_plain": 3139,
+     "lines_to_another_person_vs_plain": 1789,
+     "moved_on_gained_vs_plain": 7,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M ignore-revs": {
+     "seconds_median": 0.917,
+     "seconds_all": [
+      0.914,
+      0.945,
+      0.917
+     ],
+     "seconds_one_job": 4.335,
+     "jobs": 8,
+     "lines": 31810,
+     "failed_files": 0,
+     "ignored_commits": 1,
+     "people_with_lines": 135,
+     "moved_on_730": 133,
+     "top10_moved_on_lines": [
+      10293,
+      766,
+      603,
+      511,
+      408,
+      311,
+      305,
+      238,
+      214,
+      205
+     ],
+     "lines_to_another_commit_vs_plain": 5176,
+     "lines_to_another_person_vs_plain": 3794,
+     "moved_on_gained_vs_plain": 10,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M -C ignore-revs (default)": {
+     "seconds_median": 1.356,
+     "seconds_all": [
+      1.356,
+      1.368,
+      1.311
+     ],
+     "seconds_one_job": 6.278,
+     "jobs": 8,
+     "lines": 31810,
+     "failed_files": 0,
+     "ignored_commits": 1,
+     "people_with_lines": 136,
+     "moved_on_730": 134,
+     "top10_moved_on_lines": [
+      10545,
+      769,
+      641,
+      519,
+      408,
+      311,
+      306,
+      244,
+      214,
+      205
+     ],
+     "lines_to_another_commit_vs_plain": 6534,
+     "lines_to_another_person_vs_plain": 4234,
+     "moved_on_gained_vs_plain": 11,
+     "moved_on_lost_vs_plain": 4
+    },
+    "-w -M -C -C ignore-revs": {
+     "seconds_median": 1.563,
+     "seconds_all": [
+      1.563,
+      1.587,
+      1.524
+     ],
+     "seconds_one_job": 7.943,
+     "jobs": 8,
+     "lines": 31810,
+     "failed_files": 0,
+     "ignored_commits": 1,
+     "people_with_lines": 136,
+     "moved_on_730": 134,
+     "top10_moved_on_lines": [
+      10587,
+      769,
+      641,
+      519,
+      408,
+      311,
+      299,
+      244,
+      219,
+      214
+     ],
+     "lines_to_another_commit_vs_plain": 6873,
+     "lines_to_another_person_vs_plain": 4368,
+     "moved_on_gained_vs_plain": 11,
+     "moved_on_lost_vs_plain": 4
+    }
+   }
+  }
+ ]
+}
