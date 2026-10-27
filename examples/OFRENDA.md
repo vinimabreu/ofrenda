@@ -115,5 +115,6 @@ MIT License
 - Files read: 14; skipped: none. Lines read: 213, of which 2 by bots.
 - Moved on: lines still here, and no commit reachable from the revision in the 730 days before its commit date.
 - Cards: 5; 3 written by gemma4:12b on the first try, 2 on the second, 0 from git alone after two rejected answers. Quotes checked against the commit messages: 12.
+- Second reading of each sentence for death, judgment or gender wording, by gemma4:12b: 5 sentences read, 0 refused. It is a model too: it lowers what gets through, not to zero.
 - Commit 8019e4f9ac "Reformat with the code formatter" still holds 18 lines. If it only reformatted code, pass --ignore-rev 8019e4f9ac (or list it in .git-blame-ignore-revs) to give those lines back.
 - Made with ofrenda 0.1.0. Every number, date, path and line of code above comes from git. The sentences come from a model running on the machine that made this page. They are used only when every phrase they quote is in that person's commit messages and they pass a list of word rules; a sentence can still say something the messages do not support.

@@ -99,6 +99,9 @@ Moved on: lines still here, and no commit reachable from the revision in the
 Cards: 5; 3 written by gemma4:12b on the first try, 2 on the second, 0 from
 git alone after two rejected answers. Quotes checked against the commit
 messages: 12.
+Second reading of each sentence for death, judgment or gender wording, by
+gemma4:12b: 5 sentences read, 0 refused. It is a model too: it lowers what
+gets through, not to zero.
 Commit 8019e4f9ac "Reformat with the code formatter" still holds 18 lines. If
 it only reformatted code, pass --ignore-rev 8019e4f9ac (or list it in .git-
 blame-ignore-revs) to give those lines back.

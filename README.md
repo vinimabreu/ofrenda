@@ -71,6 +71,9 @@ Moved on: lines still here, and no commit reachable from the revision in the
 Cards: 5; 3 written by gemma4:12b on the first try, 2 on the second, 0 from
 git alone after two rejected answers. Quotes checked against the commit
 messages: 12.
+Second reading of each sentence for death, judgment or gender wording, by
+gemma4:12b: 5 sentences read, 0 refused. It is a model too: it lowers what
+gets through, not to zero.
 Commit 8019e4f9ac "Reformat with the code formatter" still holds 18 lines. If
 it only reformatted code, pass --ignore-rev 8019e4f9ac (or list it in .git-
 blame-ignore-revs) to give those lines back.
@@ -80,11 +83,11 @@ Both cards came on the second try. In the first card's first answer Gemma quoted
 
 The same cards as a page: [`examples/ofrenda.html`](examples/ofrenda.html) (one self-contained file, no script, no request), and as Markdown a team could commit: [`examples/OFRENDA.md`](examples/OFRENDA.md).
 
-"Moved on" means one thing here: the person made no commit reachable from the revision in the 730 days before the revision's date. In the code, such a person is a ghost of this repository and nothing more. The check below refuses a list of death and mourning words in English, Spanish and Portuguese. A paraphrase that is not on the list can still get through (how often is measured below), which is why every card names the model that wrote its words and every quote names its commit.
+"Moved on" means one thing here: the person made no commit reachable from the revision in the 730 days before the revision's date. In the code, such a person is a ghost of this repository and nothing more. Two things stand between a card and wording that suggests anyone died, judges them or guesses their gender: word lists in code, and a second reading of the sentence by the same local model. Neither is perfect, and both rates are measured below, on sentences written by someone who had not seen either. That is also why every card names the model that wrote its words and every quote names its commit.
 
 ## What the model does, and what code does
 
-Every number, date, path and line of code on a card comes from git through plain code. Gemma 4 (12B, through [Ollama](https://ollama.com) on this machine) writes one thing: a sentence or two on what the person left behind and why it exists, with the phrases from their commit messages that back it up. Code checks every quoted phrase against the commit messages and runs the sentence through a list of rules before the card uses them.
+Every number, date, path and line of code on a card comes from git through plain code. Gemma 4 (12B, through [Ollama](https://ollama.com) on this machine) writes one thing: a sentence or two on what the person left behind and why it exists, with the phrases from their commit messages that back it up. Code checks every quoted phrase against the commit messages and runs the sentence through a list of rules; then the model reads the sentence once more, in a separate call, and answers three yes or no questions about it. Only then does the card use it.
 
 ```mermaid
 flowchart LR
@@ -98,8 +101,10 @@ flowchart LR
     gemma --> store[(reply cache)]
     store --> check
     cached -- yes --> check[check_card<br/>every quote against the messages]
-    check -- holds --> card[card]
-    check -- fails once --> retry[ask again with<br/>the plain reason] --> check2[check_card]
+    check -- holds --> tone{second reading:<br/>death, judgment,<br/>gender?}
+    tone -- no --> card[card]
+    tone -- yes --> retry
+    check -- fails once --> retry[ask again with<br/>the plain reason] --> check2[check_card<br/>+ second reading]
     check2 -- holds --> card
     check2 -- fails --> fallback[card from git alone:<br/>top commit subject, as is] --> card
     card --> out[terminal, OFRENDA.md, HTML, JSON]
@@ -129,6 +134,12 @@ The model receives, for one person, the full commit messages (subject and body, 
 - the sentence has no control characters or markup, no date, commit hash, email address, link, file name or path (the card prints those from git next to it), and no amount in digits or in words (`fifteen`, `half`, `a third`, `percent`, `days`) unless a message has it next to the same word (`Python 3`, `Jinja2`, "the hour that repeats");
 - every capitalized word, the first word of a sentence included unless it is a plain starter such as "They" or "The", and every `camelCase` or `snake_case` identifier or code in backticks, appears in what the model was given, or is one of a few generic computing words such as API or JSON;
 - the sentence uses none of the words on three lists in [`wording.py`](src/ofrenda/wording.py): death, mourning and the afterlife in English, Spanish and Portuguese (`lost`, `gone`, `sleeps` and `no more` only with the person as subject or object, so "a lost connection" still passes); words that judge the person (`sloppy`, `lazy`); and gendered pronouns, titles and nouns (`his`, `Mr.`, `gentleman`, `man`, but not "man page"), since the card does not guess anyone's gender. In a quote, only phrases that are about a death in any context are refused (`rest in peace`, `passed away`, `RIP` in capitals), so a commit that says "rip out the old loader" can still be quoted.
+
+### A second reading of the sentence
+
+The lists catch the words on them. So a sentence that passes them goes back to the same model in a separate call, at temperature 0, with a JSON schema and no example in the prompt ([`tone.py`](src/ofrenda/tone.py)): does it say or suggest that the person died, does it insult or judge the person or their work, does it assume their gender? A yes refuses the sentence like any other rule, with the plain reason ("a second reading by the model says the sentence suggests the person died"). A reply that is not the JSON asked for gets one more try and then counts as a refusal, so a broken reading never lets a sentence through. Verdicts are cached with the card. It costs one call of about 0.71 seconds per sentence read, and `--no-tone-check` turns it off.
+
+The reader is a model too. It lowered what gets through a lot, as the measurement below shows; it did not make it zero, and on other sentences it can refuse something that was fine.
 
 When an answer fails, the model is asked once more with the plain reason (for example `the quote "..." is not in any of their commit messages`) and nothing else: no corrected version, not even its own previous answer. When the second answer fails too, the card is built from git alone: the subject line of the person's top commit, quoted as it is, marked "from git alone". No quote is invented on either path. The sentence on a card that passed can still say things the messages do not support: the rules above are lists and patterns, and a plain lowercase claim ("added redis support") or a paraphrase that is on no list gets through. Each card says which model wrote its words, and every quote on it names the commit it came from, so you can read the whole message.
 
@@ -164,31 +175,31 @@ Plain `git blame` gives each line to the last commit that touched it, so whoever
 
 | repository | history | lines | option | 8 jobs | 1 job | lines given to someone other than plain blame |
 |---|---:|---:|---|---:|---:|---:|
-| flask | 5,562 commits | 34,635 | plain | 1.36 s | 5.43 s |  |
-| | | | -w -M | 1.40 s | 5.79 s | 2,435 |
-| | | | -w -M + ignore list | 1.41 s | 5.79 s | 2,435 |
-| | | | **-w -M -C + ignore list** | 1.89 s | 8.45 s | 4,212 (12.2%) |
-| | | | -w -M -C -C + ignore list | 2.15 s | 10.59 s | 4,232 |
-| requests | 6,496 commits | 19,461 | plain | 0.68 s | 2.61 s |  |
-| | | | -w -M | 0.81 s | 2.86 s | 1,103 |
-| | | | -w -M + ignore list | 0.84 s | 2.92 s | 3,041 |
-| | | | **-w -M -C + ignore list** | 0.95 s | 3.51 s | 3,128 (16.1%) |
-| | | | -w -M -C -C + ignore list | 1.16 s | 5.34 s | 3,280 |
-| bottle | 1,999 commits | 13,894 | plain | 0.30 s | 1.39 s |  |
-| | | | -w -M | 0.53 s | 1.80 s | 256 |
-| | | | -w -M + ignore list | 0.56 s | 1.82 s | 256 |
-| | | | **-w -M -C + ignore list** | 0.58 s | 2.31 s | 422 (3.0%) |
-| | | | -w -M -C -C + ignore list | 0.60 s | 2.86 s | 434 |
-| paramiko | 4,086 commits | 31,810 | plain | 0.81 s | 3.46 s |  |
-| | | | -w -M | 0.86 s | 3.88 s | 1,789 |
-| | | | -w -M + ignore list | 0.88 s | 3.94 s | 3,794 |
-| | | | **-w -M -C + ignore list** | 1.26 s | 5.90 s | 4,234 (13.3%) |
-| | | | -w -M -C -C + ignore list | 1.50 s | 7.52 s | 4,368 |
+| flask | 5,562 commits | 34,635 | plain | 1.38 s | 5.59 s |  |
+| | | | -w -M | 1.43 s | 6.13 s | 2,435 |
+| | | | -w -M + ignore list | 1.45 s | 6.03 s | 2,435 |
+| | | | **-w -M -C + ignore list** | 1.96 s | 8.73 s | 4,212 (12.2%) |
+| | | | -w -M -C -C + ignore list | 2.20 s | 11.02 s | 4,232 |
+| requests | 6,496 commits | 19,461 | plain | 0.69 s | 2.72 s |  |
+| | | | -w -M | 0.82 s | 2.98 s | 1,103 |
+| | | | -w -M + ignore list | 0.85 s | 3.07 s | 3,041 |
+| | | | **-w -M -C + ignore list** | 0.96 s | 3.64 s | 3,128 (16.1%) |
+| | | | -w -M -C -C + ignore list | 1.16 s | 5.48 s | 3,280 |
+| bottle | 1,999 commits | 13,894 | plain | 0.31 s | 1.43 s |  |
+| | | | -w -M | 0.55 s | 1.86 s | 256 |
+| | | | -w -M + ignore list | 0.57 s | 1.90 s | 256 |
+| | | | **-w -M -C + ignore list** | 0.58 s | 2.38 s | 422 (3.0%) |
+| | | | -w -M -C -C + ignore list | 0.60 s | 2.94 s | 434 |
+| paramiko | 4,086 commits | 31,810 | plain | 0.82 s | 3.60 s |  |
+| | | | -w -M | 0.87 s | 4.07 s | 1,789 |
+| | | | -w -M + ignore list | 0.92 s | 4.35 s | 3,794 |
+| | | | **-w -M -C + ignore list** | 1.30 s | 6.24 s | 4,234 (13.3%) |
+| | | | -w -M -C -C + ignore list | 1.53 s | 7.74 s | 4,368 |
 
-- `-w` (whitespace) and `-M` (lines moved inside a file) cost little: at most 0.23 s more with 8 jobs (0.534 s against 0.303 s, on bottle, whose code is one large file).
+- `-w` (whitespace) and `-M` (lines moved inside a file) cost little: at most 0.24 s more with 8 jobs (0.546 s against 0.307 s, on bottle, whose code is one large file).
 - The ignore list costs nothing and matters where it exists. requests and paramiko each list one formatter run in `.git-blame-ignore-revs`; honoring it gives 1,938 and 2,005 lines back to the people who wrote them.
-- `-C` (lines moved or copied from another file changed in the same commit) costs 3% to 43% more time with 8 jobs, under half a second here (20% to 50% with one job), and gives back 1,777 more lines in flask, where modules were split, and 87 to 440 in the others.
-- `-C -C` (also copies from other files in the commit that created the file) costs another 3% to 22% for 12 to 152 more lines.
+- `-C` (lines moved or copied from another file changed in the same commit) costs 2% to 43% more time with 8 jobs, under half a second here (18% to 45% with one job), and gives back 1,777 more lines in flask, where modules were split, and 87 to 440 in the others.
+- `-C -C` (also copies from other files in the commit that created the file) costs another 4% to 21% for 12 to 152 more lines.
 
 So ofrenda blames with `-w -M -C` and the ignore list, and `--no-copies` drops `-C`. With `-C`, 27 more people still have lines in flask (437 instead of 410). The full table, with the number of people who moved on under each option, is in [`measurements/2026-10-26-summary.md`](measurements/2026-10-26-summary.md).
 
@@ -200,19 +211,19 @@ The same four bare clones, a card for each of the 10 people with the most surviv
 
 | repository | people with lines | moved on | cards | first try | after retry | from git alone | quotes checked | first run | second run |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| flask | 437 | 415 | 10 | 8 | 1 | 1 | 24 | 25.29 s | 0.24 s |
-| requests | 500 | 469 | 10 | 9 | 0 | 1 | 25 | 26.08 s | 0.28 s |
-| bottle | 159 | 147 | 10 | 10 | 0 | 0 | 26 | 20.60 s | 0.21 s |
-| paramiko | 136 | 134 | 10 | 10 | 0 | 0 | 30 | 27.36 s | 0.23 s |
+| flask | 437 | 415 | 10 | 8 | 1 | 1 | 24 | 30.26 s | 0.23 s |
+| requests | 500 | 469 | 10 | 9 | 0 | 1 | 25 | 29.11 s | 0.33 s |
+| bottle | 159 | 147 | 10 | 10 | 0 | 0 | 26 | 25.07 s | 0.25 s |
+| paramiko | 136 | 134 | 10 | 10 | 0 | 0 | 30 | 33.48 s | 0.30 s |
 | total | | | 40 | 37 | 1 | 2 | 105 | | |
 
-The first run blames, asks the model 10 to 12 times (1.87 to 2.48 seconds per call, median prompts of 1,074 to 1,662 characters) and writes the cards. The second run reads the facts and the replies from the cache and prints the same output, byte for byte, in about a quarter of a second. With `--no-model` the first run takes 1.35 to 3.55 seconds.
+The first run blames, asks the model for words 10 to 12 times (2.28 to 3.09 seconds per call, median prompts of 1,074 to 1,662 characters), reads each sentence that passed the lists a second time (38 readings, 0.53 to 0.65 seconds each, 0 refused) and writes the cards. The second run reads the facts, the replies and the readings from the cache and prints the same output, byte for byte, in 0.23 to 0.33 seconds. With `--no-model` the first run takes 1.36 to 3.07 seconds.
 
 Five answers were refused, and every refusal held up when read by hand. Three quoted a single word: for one person the model quoted their one-word top commit message twice, so that card fell back to git alone and shows the word as the subject it is, and another person's card passed on the retry. The other two (one answer and its retry) quoted `Add async support` where the message says ``Add `async` support``, with backticks; that card fell back to git alone too.
 
-A second cold run, right after the first, wrote the same 40 cards, word for word. The time per call did not repeat: it went from 1.87 to 2.48 seconds to 2.14 to 3.41 seconds. Other programs were open on the machine during both runs, and the cause was not isolated.
+A second cold run, right after the first, wrote the same 40 cards, word for word. The time per call did not repeat: it went from 2.28 to 3.09 seconds to 2.76 to 4.37 seconds. Other programs were open on the machine during both runs, and the cause was not isolated.
 
-The stricter check that came out of the audit refused none of these 40 answers that the earlier check had passed: the counts above are the same as before the audit.
+Neither the stricter lists that came out of an audit nor the second reading refused any of these answers: the counts above are the same as before both.
 
 ### Breaking good answers on purpose
 
@@ -222,15 +233,24 @@ To see whether the check lets anything through, [`ofrenda.tamper`](src/ofrenda/t
 
 ### Wording that is on no list
 
-That is what the held-out sets measure. [`tests/heldout`](tests/heldout) holds 45 death and mourning paraphrases (English, Spanish, Portuguese: "crossed over", "kicked the bucket", "partiu desta para melhor"), 26 put-downs and 20 gendered phrases without a pronoun ("a fine fellow", "the father of the retry logic"). They were written before the word lists and never added to them. Each sentence was put on each of the 38 people above, with that person's real quotes, so a refusal can only come from the sentence:
+Two held-out sets test the parts that are only screened. [`tests/heldout`](tests/heldout) (45 death and mourning paraphrases in English, Spanish and Portuguese, 26 put-downs, 20 gendered phrases without a pronoun) was written by me before the word lists, and never added to them. [`tests/heldout-v2`](tests/heldout-v2) (50 death, 35 judgment, 30 gendered, and 80 respectful sentences with technical traps such as a killed worker or dead code) was written by an independent writer who had seen neither the lists nor the prompts. The second reading was frozen and committed before that folder was opened, and both sets were measured once, with no change to any list or prompt afterwards.
 
-| held-out set | sentences | trials | refused | refused for that reason | sentences never refused |
-|---|---:|---:|---:|---:|---:|
-| death and mourning | 45 | 1,710 | 418 (24.4%) | 304 (17.8%) | 34 |
-| judging the person | 26 | 988 | 38 (3.8%) | 38 (3.8%) | 25 |
-| gendered wording | 20 | 760 | 190 (25.0%) | 114 (15.0%) | 15 |
+Each sentence was put on real people from the four repositories with their real quotes, so a refusal can only come from the sentence. The lists ran on all 38 people whose answers passed; the second reading, and both together, on 8 of them, two per repository (2,326 readings). Refused, in percent of trials:
 
-Most of these get through: 34 of the 45 death paraphrases, 25 of the 26 put-downs and 15 of the 20 gendered phrases were refused for nobody. A list catches the words on it and not much more. What keeps a card honest is the part that is verified, the quotes and every fact from git, and a card that names its model and its commits so a reader can check the rest. I read the 40 real cards above by hand, and none of them carries death, put-down or gendered wording; the held-out sets say how much of it would get through if Gemma wrote it.
+| set | lists | second reading | both |
+|---|---:|---:|---:|
+| death and mourning, my set | 24.4% | 96.4% | 96.4% |
+| death and mourning, independent set | 73.8% | 94.2% | 99.8% |
+| judging the person, my set | 3.8% | 96.2% | 96.2% |
+| judging the person, independent set | 56.6% | 100.0% | 100.0% |
+| gendered wording, my set | 25.0% | 90.0% | 90.0% |
+| gendered wording, independent set | 86.7% | 79.2% | 95.0% |
+| **false refusals**: respectful sentences, independent set | 21.2% | 0.0% | 21.2% |
+| **false refusals**: the 38 real sentences that passed the lists | 0.0% | 0.0% | 0.0% |
+
+On the independent set, lists and second reading together refused 99.8% of the death wording, 100.0% of the put-downs and 95.0% of the gendered wording. So some still gets through. The second reading refused none of the respectful sentences and none of the real ones. The 21.2% of respectful sentences the lists refused is mostly the check doing its other job: those sentences were not written from these people's commit messages, so they name things the messages do not (an acronym, an operating system) or carry an amount; only 3.75% of those trials (24 of 640 on the sample) were refused for death, judgment or gender words ("dead" in dead code, "outlived", and the Portuguese "eles"). The full numbers are in [`measurements/2026-10-27-gemma4-12b-tone.json`](measurements/2026-10-27-gemma4-12b-tone.json).
+
+I read the 40 real cards above by hand, and none of them carries death, put-down or gendered wording.
 
 ## Install
 
@@ -254,6 +274,7 @@ ofrenda --md OFRENDA.md --html ofrenda.html --json ofrenda.json
 ofrenda --ignore-rev 8019e4f9ac          # blame past a formatter commit
 ofrenda --no-copies                      # blame without -C (faster on very large repositories)
 ofrenda --no-model                       # cards from git alone
+ofrenda --no-tone-check                  # skip the second reading of each sentence
 ofrenda --model qwen3:8b                 # another local model
 ```
 
@@ -269,15 +290,16 @@ pytest -q
 On the machine that made the measurements, with Ollama running (so the one test that talks to the real model ran too):
 
 ```text
-337 passed in 32.89s
+353 passed in 32.63s
 ```
 
 The suite builds its repositories in temporary folders with invented authors and dates, uses a fake model, and needs no network. One test talks to a real Ollama and is skipped when there is none.
 
 ## Where it is weak
 
-- The sentence. Quotes are verified; the sentence around them is only screened. A plain lowercase claim the messages do not make ("added redis and kubernetes support", "built the sorted job list" when someone else did) passes, and so does wording that is on none of the lists. Of the held-out paraphrases above, the check refuses 24.4% of the death ones, 3.8% of the put-downs and 25.0% of the gendered ones.
-- The word lists hold what an audit of ofrenda named, with inflections and Spanish and Portuguese translations. The held-out sentences were written before the lists and never added to them, but by the same person, so the rates above are not from an independent reader.
+- The sentence. Quotes are verified; the sentence around them is only screened. A plain lowercase claim the messages do not make ("added redis and kubernetes support", "built the sorted job list" when someone else did) passes the rules, and the second reading does not look for it. On the independent held-out set, 0.2% of the death wording, 0.0% of the put-downs and 5.0% of the gendered wording still got through both layers.
+- The second reading is the same model judging its own kind of text. It was measured on one set of respectful sentences and on 38 real ones, with no false refusal, but that is two sets; on other text it can refuse a good sentence (which costs a retry, or a card from git alone) or pass a bad one.
+- The word lists hold what an audit of ofrenda named, with inflections and Spanish and Portuguese translations. My held-out set was written before the lists and never added to them, but by the same person; the second set was written by someone else, blind.
 - Amount words are refused unless a message has them next to the same word, so a faithful sentence with "one" or "hours" in it costs a retry. Capitalized words, the first word of a sentence included, must come from what the model saw, so an ordinary word at the start of a sentence that the messages lack (say "Retries" when the messages never use it) also costs a retry.
 - Activity is the author date: a change written long ago and applied recently counts on the day it was written. A wrong clock in an old commit puts that commit on the wrong day.
 - One person is one canonical email address after the `.mailmap` at the revision, and two addresses that carry the same full name are joined (generic names such as `root` are not). Two different people with the same full name become one card, and so do two people who committed under one shared address (a `dev@localhost` or a team address); someone who changed both name and address without a `.mailmap` entry shows up twice. Joining errs in the safer direction: it can hide a card, never announce a departure that did not happen.
@@ -286,7 +308,7 @@ The suite builds its repositories in temporary folders with invented authors and
 - The check was changed twice before the runs above. After a preliminary run on the same four repositories, it rejected faithful sentences that carried `Python 3` and `Jinja2` copied from the messages and split one person's name at a middle initial; both were fixed. Then an audit got 45 bad sentences through it (death paraphrases, amounts in words, invented quotes in single quotes, insults, gendered titles, quotes that start inside a word); the rules above came from that audit. The measured runs came after both, with the code frozen.
 - The numbers are one model (`gemma4:12b`, Q4_K_M) on one machine (Apple silicon, 18 cores). Other models and machines will be slower or faster, and will write other sentences.
 - On a shallow clone, lines older than its history are credited to its oldest commit; the output says when a clone is shallow.
-- Tested on macOS (Python 3.14, git 2.54) and in Linux containers: the whole suite on Python 3.12 with git 2.54 (336 passed, the real-model test skipped), and on Python 3.11 and 3.13, whose images have no git, the five test files that need none (`test_cards`, `test_model`, `test_render`, `test_seeds`, `test_wording`: 228 passed on each). The workflow in `.github/workflows` runs the whole suite on Python 3.11, 3.12 and 3.13. Windows is not tested.
+- Tested on macOS (Python 3.14, git 2.54) and in Linux containers: the whole suite on Python 3.12 with git 2.54 (352 passed, the real-model test skipped), and on Python 3.11 and 3.13, whose images have no git, the six test files that need none (`test_cards`, `test_model`, `test_render`, `test_seeds`, `test_tone`, `test_wording`: 244 passed on each). The workflow in `.github/workflows` runs the whole suite on Python 3.11, 3.12 and 3.13. Windows is not tested.
 
 ## License
 
