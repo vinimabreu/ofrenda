@@ -3,7 +3,7 @@
 Written separately, in a process with no access to the word lists in `src/ofrenda/wording.py` or the
 prompts in `src/ofrenda/cards.py` and `src/ofrenda/tone.py`. The second reading (`tone.py`) was
 committed (12c224f) before these files were opened, and they were measured once, with the word lists
-of that commit and no change to any prompt afterwards. They were copied here after that measurement.
+of that commit and no prompt changed between that commit and the measurement. They were copied here after that measurement.
 The word lists changed later, after an audit, and after these files had been seen: results with the
 later lists are reported apart and are not blind.
 
