@@ -218,3 +218,11 @@ def test_the_held_out_sets_are_where_the_measurement_expects_them() -> None:
 def test_no_term_that_only_the_held_out_sets_use_is_on_a_list(term: str) -> None:
     for pattern in (wording.DEATH, wording.JUDGMENT, wording.GENDERED, wording.TITLES):
         assert not re.search(rf"(?<![a-z]){re.escape(term)}(?![a-z])", pattern.pattern)
+
+
+def test_the_independent_held_out_set_is_complete() -> None:
+    folder = HELDOUT.parent / "heldout-v2"
+    sizes = {name: len([line for line in (folder / f"{name}.txt").read_text(encoding="utf-8").splitlines()
+                        if line.strip() and not line.startswith("#")])
+             for name in ("death", "judgment", "gendered", "clean")}
+    assert sizes == {"death": 50, "judgment": 35, "gendered": 30, "clean": 80}

@@ -1,0 +1,35 @@
+{name}'s retry logic is a hacky mess that somehow limps along in production.
+Credit to {name} for writing a parser that only fails on real-world input.
+The timezone handling is wonderfully naive, which is very typical of {name}.
+{name} clearly never heard of tests, judging by the storage module.
+It works, strangely, despite {name}'s best efforts to break the CLI.
+Messy is the kindest word for the config loader {name} left behind.
+Every bug in the date parser traces back to a careless decision by {name}.
+{name} wrote the docs generator in a rush and it shows on every page.
+Bless {name}, the cache layer was a brave attempt at something they did not understand.
+The queue worker is spaghetti, and {name} should have known better.
+{name} never learned to handle errors, hence the endless crashes in the uploader.
+Sloppy commits from {name} left the build script a complete disaster.
+It takes real talent to make a pagination helper this confusing, {name}.
+{name}'s code reads like a first draft that nobody ever bothered to review.
+Obviously {name} copy-pasted the encoder from a forum without understanding it.
+The only thing consistent about {name}'s style is how inconsistent it is.
+{name} was out of their depth with concurrency, and the lock manager proves it.
+Kudos to {name} for inventing a brand new way to leak memory in the connection pool.
+That regex is amateur hour, a classic {name} shortcut.
+We are still cleaning up after {name}, whose migration runner was reckless.
+{name} was lazy about naming, so the whole module is unreadable garbage.
+Honestly, {name} should not have been trusted with the serializer.
+A senior engineer would have caught what {name} missed in the rate limiter, but oh well.
+{name}'s tokenizer is held together with duct tape and wishful thinking.
+Poor {name} tried their best, but the glob matcher is still embarrassing.
+Thanks to {name}'s sloppy locking, the sync daemon corrupts files on a regular basis.
+{name} clearly had no clue how logging works, so the middleware is a joke.
+Sure, {name} meant well, but the checksum code is frankly incompetent.
+The changelog tool is a monument to {name}'s poor judgment.
+Que desastre el analizador que escribio {name}, lleno de parches mal hechos.
+El modulo de reintentos de {name} es ingenuo y descuidado.
+O codigo de {name} no passa de uma gambiarra mal feita no gerador de documentacao.
+A culpa dos bugs no parser de datas e toda de {name}, que nunca testou nada.
+{name} fez um trabalho preguicoso na camada de armazenamento, e todo mundo sofre ate hoje.
+Que bom que {name} se esforcou, porque o resultado na fila de mensagens e bem fraco.

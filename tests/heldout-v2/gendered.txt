@@ -1,0 +1,30 @@
+{name} built the retry loop himself, and he never asked for credit.
+She wrote the date parser from scratch, and her tests still pass.
+{name} moved on to other projects, but his storage layer keeps running.
+The CLI is hers, and {name} made sure it handled every flag.
+{name} was the original author, and he documented every function.
+Ask {name} about the config loader; she knows why it works that way.
+The timezone code reflects his careful habits, and {name} never rushed it.
+{name} is a talented engineer, and her work on the cache still shines.
+Our former maintainer {name} wrote the parser, and he chose its odd defaults for a reason.
+Mr. {name} designed the queue worker so it would survive restarts.
+Ms. {name} left the docs generator in excellent shape when she stepped away.
+{name} is the father of the serializer module, and it shows in the clean interface.
+She is the mother of this build script, and {name} would be proud that it still runs.
+The craftsman {name} shaped the glob matcher, and his sense of detail is obvious.
+{name} was a true gentleman about code review, patient with every contributor.
+The lady who wrote the pagination helper, {name}, left clear comments throughout.
+{name} taught himself Rust to write the encoder, and it paid off.
+{name} did the checksum work herself, with no help from the team.
+Dr. {name} contributed the rate limiter, and his paper is cited in the header.
+The chairman of the working group, {name}, wrote the lock manager.
+Ella escribio el analizador de fechas, y {name} dejo pruebas para cada caso.
+{name} es el autor del modulo de reintentos, y el siempre explico sus decisiones.
+La desarrolladora {name} creo el cargador de configuracion y lo documento por completo.
+El ingeniero {name} diseno la capa de almacenamento con mucho cuidado.
+Ela escreveu o parser de fusos horarios, e {name} deixou tudo bem testado.
+{name} e o autor da CLI, e ele manteve a interface simples por anos.
+A programadora {name} criou o gerador de documentacao, e o resultado aguenta ate hoje.
+O desenvolvedor {name} entregou a fila de mensagens sozinho, e ele cuidou de cada detalhe.
+She left behind a tidy tokenizer, and {name} wrote the README herself.
+{name} wrote the sync daemon, and the old man was careful about every edge case.
