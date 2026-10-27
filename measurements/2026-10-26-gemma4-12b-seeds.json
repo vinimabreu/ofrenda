@@ -1,7 +1,7 @@
 {
  "model": "gemma4:12b",
  "answers": 38,
- "seeds": 1164,
+ "seeds": 1637,
  "passed_the_check": 0,
  "by_kind": {
   "quote-case-changed": {
@@ -24,7 +24,15 @@
    "seeds": 35,
    "passed": 0
   },
+  "quote-starts-inside-a-word": {
+   "seeds": 104,
+   "passed": 0
+  },
   "quote-word-added": {
+   "seeds": 105,
+   "passed": 0
+  },
+  "quote-word-and-symbol": {
    "seeds": 105,
    "passed": 0
   },
@@ -68,6 +76,18 @@
    "seeds": 38,
    "passed": 0
   },
+  "sentence-gendered-noun": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-gendered-title": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-guillemets-invented": {
+   "seeds": 38,
+   "passed": 0
+  },
   "sentence-hash": {
    "seeds": 38,
    "passed": 0
@@ -76,7 +96,19 @@
    "seeds": 38,
    "passed": 0
   },
+  "sentence-invented-name-first": {
+   "seeds": 36,
+   "passed": 0
+  },
+  "sentence-judgment": {
+   "seeds": 38,
+   "passed": 0
+  },
   "sentence-link": {
+   "seeds": 38,
+   "passed": 0
+  },
+  "sentence-number-word": {
    "seeds": 38,
    "passed": 0
   },
@@ -88,9 +120,39 @@
    "seeds": 38,
    "passed": 0
   },
+  "sentence-single-quoted-invented": {
+   "seeds": 38,
+   "passed": 0
+  },
   "sentence-year": {
    "seeds": 38,
    "passed": 0
+  }
+ },
+ "heldout": {
+  "death": {
+   "sentences": 45,
+   "trials": 1710,
+   "rejected": 418,
+   "rejected_for_this_reason": 304,
+   "rejected_for_every_answer": 11,
+   "never_rejected": 34
+  },
+  "judgment": {
+   "sentences": 26,
+   "trials": 988,
+   "rejected": 38,
+   "rejected_for_this_reason": 38,
+   "rejected_for_every_answer": 1,
+   "never_rejected": 25
+  },
+  "gendered": {
+   "sentences": 20,
+   "trials": 760,
+   "rejected": 190,
+   "rejected_for_this_reason": 114,
+   "rejected_for_every_answer": 5,
+   "never_rejected": 15
   }
  }
 }

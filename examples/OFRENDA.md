@@ -33,11 +33,11 @@ MIT License
 
 ## Tomas Varga
 
-> Tomas Varga implemented logic to handle job retries with backoff and ensured the scheduler correctly manages time zones and repeating hours.
+> Tomas Varga implemented logic to handle job retries with backoff and ensured the scheduler respects time zones during clock changes.
 >
-> In their words: "Retry failed jobs with backoff" (`9c747ce829`, 2012-06-30); "Teach the scheduler about time zones" (`99340cb984`, 2012-02-11); "Handle the hour that repeats when clocks go back" (`8898c52629`, 2015-03-03)
+> In their words: "Retry failed jobs with backoff" (`9c747ce829`, 2012-06-30); "Teach the scheduler about time zones" (`99340cb984`, 2012-02-11)
 
-*words by gemma4:12b, every quote checked against git*
+*words by gemma4:12b on the second try, every quote checked against git*
 
 | | |
 |---|---|
@@ -114,6 +114,6 @@ MIT License
 - Revision 3aff65026debda92e05289fc36c2b42249356c52 (2026-09-28). Blame options: -w -M -C ignore-revs.
 - Files read: 14; skipped: none. Lines read: 213, of which 2 by bots.
 - Moved on: lines still here, and no commit reachable from the revision in the 730 days before its commit date.
-- Cards: 5; 4 written by gemma4:12b on the first try, 1 on the second, 0 from git alone after two rejected answers. Quotes checked against the commit messages: 13.
+- Cards: 5; 3 written by gemma4:12b on the first try, 2 on the second, 0 from git alone after two rejected answers. Quotes checked against the commit messages: 12.
 - Commit 8019e4f9ac "Reformat with the code formatter" still holds 18 lines. If it only reformatted code, pass --ignore-rev 8019e4f9ac (or list it in .git-blame-ignore-revs) to give those lines back.
-- Made with ofrenda 0.1.0. Every number, date, path and line of code above comes from git. The sentences come from a model running on the machine that made this page, and are used only when every phrase they quote is found in that person's commit messages.
+- Made with ofrenda 0.1.0. Every number, date, path and line of code above comes from git. The sentences come from a model running on the machine that made this page. They are used only when every phrase they quote is in that person's commit messages and they pass a list of word rules; a sentence can still say something the messages do not support.
