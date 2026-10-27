@@ -8,7 +8,9 @@ An ofrenda for the people whose code still runs. Gemma 4 writes each card on you
 
 Every long-lived repository carries lines written by people who stopped committing to it years ago. Their names are in `git blame`, one line at a time, and nowhere else. An ofrenda keeps people present. This one keeps present the people whose work still runs: it finds everyone who still has lines in the code and has moved on from the repository to other things, and gives each of them a card with what is still theirs, the oldest of their lines that still runs, and a sentence about what they left behind, in the words of their own commit messages.
 
-<!-- hero GIF: assets/ofrenda.gif goes here -->
+![ofrenda: git finds who still has lines in the code, Gemma 4 writes each card on your machine, and code checks every quote](assets/ofrenda.gif)
+
+The animation runs on the invented demo repository below. Every line and number in it comes from that run's output and from the files in [`measurements/`](measurements/); a 1280x720 video of it is in [`assets/ofrenda.mp4`](assets/ofrenda.mp4).
 
 Here is the output for `almanac`, an invented job scheduler with fifteen years of history that [`scripts/make_demo.py`](scripts/make_demo.py) builds (every name in it is made up, and the commit ids come out the same on any machine), cut where it says `...`. The whole output is in [`examples/almanac.txt`](examples/almanac.txt).
 
