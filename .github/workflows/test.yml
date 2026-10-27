@@ -17,3 +17,5 @@ jobs:
       - run: git --version
       - run: pip install pytest
       - run: pytest -q
+      - run: pip install .
+      - run: cd "$RUNNER_TEMP" && ofrenda --help
