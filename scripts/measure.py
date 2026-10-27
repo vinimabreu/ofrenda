@@ -99,7 +99,11 @@ def measure_repo(clone: Path, raw: Path, top: int, model_name: str) -> dict[str,
         "messages_per_prompt_median": statistics.median(messages) if messages else 0,
         "wall_seconds_cold": round(cold_s, 2), "wall_seconds_warm": round(warm_s, 2),
         "wall_seconds_no_model": round(bare_s, 2),
+        "tone_calls_cold": stats["tone_calls"], "tone_refused_cold": stats["tone_refused"],
+        "tone_seconds_cold": round(stats["tone_seconds"], 2),
+        "tone_seconds_per_call": round(stats["tone_seconds"] / stats["tone_calls"], 3) if stats["tone_calls"] else None,
         "warm_model_calls": warm_stats["asked"], "warm_replies_from_cache": warm_stats["cached"],
+        "warm_tone_calls": warm_stats["tone_calls"],
         "warm_facts_from_cache": warm["facts_from_cache"],
         "warm_output_identical": (raw / f"{name}-cold.txt").read_bytes() == (raw / f"{name}-warm.txt").read_bytes(),
         "rejection_reasons": dict(sorted(reasons.items())),
@@ -122,7 +126,8 @@ def main() -> int:
     started = time.strftime("%Y-%m-%dT%H:%M:%S%z")
     repos = [measure_repo(c, args.raw, args.top, args.model) for c in args.clones]
     totals = {key: sum(r[key] for r in repos) for key in ("cards", "first_try", "after_retry", "fallback",
-                                                         "quotes_verified", "model_calls_cold", "warm_model_calls")}
+                                                         "quotes_verified", "model_calls_cold", "warm_model_calls",
+                                                         "tone_calls_cold", "tone_refused_cold", "warm_tone_calls")}
     data = {"ofrenda": __version__, "code": code_hash(), "started": started, "model": args.model,
             "model_digest": model.digest(args.model), "top": args.top, "python": sys.version.split()[0],
             "cpu_count": os.cpu_count(), "repos": repos, "totals": totals}

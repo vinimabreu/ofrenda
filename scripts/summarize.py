@@ -61,6 +61,12 @@ def cards_tables(data: dict[str, Any]) -> list[str]:
                    f"{r['model_seconds_cold']:.1f} s | {r['model_seconds_per_call']:.2f} s | "
                    f"{r['prompt_chars_median']:,} | {r['wall_seconds_cold']:.2f} s | {r['wall_seconds_warm']:.2f} s | "
                    f"{r['wall_seconds_no_model']:.2f} s | {'yes' if r['warm_output_identical'] else 'NO'} |")
+    out += ["", "| repository | second readings | refused by them | reading time | per reading |",
+            "|---|---:|---:|---:|---:|"]
+    for r in data["repos"]:
+        per = r.get("tone_seconds_per_call")
+        out.append(f"| {r['repo']} | {r.get('tone_calls_cold', 0)} | {r.get('tone_refused_cold', 0)} | "
+                   f"{r.get('tone_seconds_cold', 0):.1f} s | {'' if per is None else f'{per:.2f} s'} |")
     reasons: dict[str, int] = {}
     for r in data["repos"]:
         for reason, n in r["rejection_reasons"].items():
@@ -110,6 +116,20 @@ def heldout_table(data: dict[str, Any]) -> list[str]:
     return out
 
 
+def tone_table(data: dict[str, Any]) -> list[str]:
+    out = [f"The second reading, frozen before the independent set was opened: {data['judge_calls']:,} calls, "
+           f"median {data['judge_seconds_median']} s each. Lists on all {data['people_passing']} people; the "
+           f"reading and both on {data['sample_people']} of them (two per repository).", "",
+           "| set | sentences | lists | lists (sample) | second reading | both |", "|---|---:|---:|---:|---:|---:|"]
+    for label, v in data["sets"].items():
+        out.append(f"| {label} | {v['sentences']} | {v['lists_refused_pct']}% | {v['sample_lists_refused_pct']}% | "
+                   f"{v['judge_refused_pct']}% | {v['both_refused_pct']}% |")
+    real = data["real_cards"]
+    out.append(f"| real cards that passed the lists | {real['sentences']} | 0.0% | 0.0% | "
+               f"{real['judge_refused_pct']}% | {real['judge_refused_pct']}% |")
+    return out
+
+
 def main() -> int:
     prefix = sys.argv[1]
     blame = load(Path(f"{prefix}-blame-options.json"))
@@ -124,6 +144,10 @@ def main() -> int:
     lines += ["## Seeds", "", *seeds_table(seeds), ""]
     if seeds.get("heldout"):
         lines += ["## Held-out wording", "", *heldout_table(seeds), ""]
+    tone_path = Path(sys.argv[2]) if len(sys.argv) > 2 else None
+    if tone_path and tone_path.exists():
+        lines += ["## The second reading", "", "Refused, in percent of trials (good sets: false refusals).", "",
+                  *tone_table(load(tone_path)), ""]
     print("\n".join(lines))
     return 0
 
