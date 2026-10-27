@@ -110,7 +110,7 @@ def test_more_than_three_quotes_are_rejected() -> None:
     ("The ghost of Celia Mbeki wrote sessions.", "as if the person died"),
     ("Celia Mbeki died after writing sessions.", "as if the person died"),
     ("Her session code lives on in this repository.", "as if the person died"),
-    ("Celia Mbeki removed dead code from sessions.", "as if the person died"),
+    ("Celia Mbeki is dead to the project, and sessions remain.", "as if the person died"),
     ("Celia Mbeki wrote sessions and his blueprints.", "does not guess anyone's gender"),
     ("She made sessions pluggable.", "does not guess anyone's gender"),
     ("Celia Mbeki made sessions pluggable in Django style.", 'names "Django"'),

@@ -226,3 +226,55 @@ def test_the_independent_held_out_set_is_complete() -> None:
                         if line.strip() and not line.startswith("#")])
              for name in ("death", "judgment", "gendered", "clean")}
     assert sizes == {"death": 50, "judgment": 35, "gendered": 30, "clean": 80}
+
+
+# -- technical prose that shares words with the lists (fixed after a second audit) ----------------
+
+TECH = Material("Tomas Varga", "almanac", (M1, M2, M3, CommitFact(
+    "d" * 40, "2017-01-01", "Add two-factor login", 4,
+    "Add two-factor login\n\nVendor a third-party parser and keep the new one behind a flag.")),
+    ("almanac/retry.py",), "almanac/retry.py", ())
+
+
+@pytest.mark.parametrize("text", [
+    "Tomas Varga added lazy loading so failed jobs retry with backoff.",
+    "Tomas Varga lazily loads the retry policy for failed jobs.",
+    "Tomas Varga made failed jobs retry with backoff to resist a man-in-the-middle.",
+    "Tomas Varga made failed jobs retry with backoff after a late reply from a worker.",
+    "Tomas Varga made sure failed jobs retry with backoff when the parent dies.",
+    "Tomas Varga removed dead code and made failed jobs retry with backoff.",
+    "Tomas Varga sent failed jobs to a dead letter queue after the backoff.",
+    "Tomas Varga kept tombstones for jobs that retry with backoff.",
+    "Tomas Varga made sure the retry state lives on disk.",
+    "Tomas Varga added late binding to the retry policy for failed jobs.",
+    "Tomas Varga fixed the grave accent in job names that retry with backoff.",
+    "Tomas Varga removed ghost text from failed jobs that retry with backoff.",
+    "Tomas Varga kept remembered hosts out of the retry loop for failed jobs.",
+    "Tomas Varga made failed jobs retry with backoff in the parent process and the child process.",
+    "Tomas Varga added two-factor login, and failed jobs retry with backoff.",
+    "Tomas Varga vendored a third-party parser, and failed jobs retry with backoff.",
+    "Tomas Varga kept the new one behind a flag, and failed jobs retry with backoff.",
+])
+def test_technical_phrases_pass(text: str) -> None:
+    assert check_card(Answer(text, Q), TECH) is None
+
+
+@pytest.mark.parametrize("text", [
+    "Tomas Varga was lazy about failed jobs.",
+    "Tomas Varga is dead, and failed jobs still retry with backoff.",
+    "Tomas Varga added two-step login.",
+])
+def test_the_same_words_about_the_person_or_uncopied_still_fail(text: str) -> None:
+    assert check_card(Answer(text, Q), TECH) is not None
+
+
+@pytest.mark.parametrize("text", [
+    "Tomas Varga, the father of the retry logic, made failed jobs back off.",
+    "Tomas Varga, the godfather of retries, taught failed jobs to back off.",
+    "Tomas Varga, a true craftsman, made failed jobs retry with backoff.",
+    "Tomas Varga looked after failed jobs like a big brother.",
+    "Tomas Varga, a husband who loved retries, made failed jobs back off.",
+    "Tomas Varga fue el padrino de los reintentos.",
+])
+def test_kinship_and_role_nouns_are_gendered(text: str) -> None:
+    assert "gender" in (check_card(Answer(text, Q), TECH) or "")
