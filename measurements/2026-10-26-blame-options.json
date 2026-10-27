@@ -10,13 +10,13 @@
    "files_kept": 226,
    "variants": {
     "plain": {
-     "seconds_median": 1.382,
+     "seconds_median": 1.335,
      "seconds_all": [
-      1.384,
-      1.382,
-      1.375
+      1.355,
+      1.334,
+      1.335
      ],
-     "seconds_one_job": 5.588,
+     "seconds_one_job": 5.515,
      "jobs": 8,
      "lines": 34635,
      "failed_files": 0,
@@ -37,13 +37,13 @@
      ]
     },
     "-w": {
-     "seconds_median": 1.414,
+     "seconds_median": 1.354,
      "seconds_all": [
-      1.4,
-      1.414,
-      1.418
+      1.354,
+      1.352,
+      1.362
      ],
-     "seconds_one_job": 5.754,
+     "seconds_one_job": 5.618,
      "jobs": 8,
      "lines": 34635,
      "failed_files": 0,
@@ -68,13 +68,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M": {
-     "seconds_median": 1.43,
+     "seconds_median": 1.388,
      "seconds_all": [
-      1.43,
-      1.437,
-      1.423
+      1.388,
+      1.393,
+      1.378
      ],
-     "seconds_one_job": 6.132,
+     "seconds_one_job": 5.804,
      "jobs": 8,
      "lines": 34635,
      "failed_files": 0,
@@ -99,13 +99,13 @@
      "moved_on_lost_vs_plain": 5
     },
     "-w -M ignore-revs": {
-     "seconds_median": 1.452,
+     "seconds_median": 1.403,
      "seconds_all": [
-      1.452,
-      1.45,
-      1.452
+      1.408,
+      1.393,
+      1.403
      ],
-     "seconds_one_job": 6.03,
+     "seconds_one_job": 5.851,
      "jobs": 8,
      "lines": 34635,
      "failed_files": 0,
@@ -130,13 +130,13 @@
      "moved_on_lost_vs_plain": 5
     },
     "-w -M -C ignore-revs (default)": {
-     "seconds_median": 1.96,
+     "seconds_median": 1.869,
      "seconds_all": [
-      1.96,
-      2.025,
-      1.929
+      1.869,
+      1.859,
+      1.897
      ],
-     "seconds_one_job": 8.734,
+     "seconds_one_job": 8.37,
      "jobs": 8,
      "lines": 34635,
      "failed_files": 0,
@@ -161,13 +161,13 @@
      "moved_on_lost_vs_plain": 5
     },
     "-w -M -C -C ignore-revs": {
-     "seconds_median": 2.199,
+     "seconds_median": 2.179,
      "seconds_all": [
-      2.194,
-      2.199,
-      2.217
+      2.139,
+      2.179,
+      2.222
      ],
-     "seconds_one_job": 11.015,
+     "seconds_one_job": 10.706,
      "jobs": 8,
      "lines": 34635,
      "failed_files": 0,
@@ -200,19 +200,19 @@
    "files_kept": 119,
    "variants": {
     "plain": {
-     "seconds_median": 0.691,
+     "seconds_median": 0.675,
      "seconds_all": [
-      0.7,
-      0.687,
-      0.691
+      0.676,
+      0.675,
+      0.667
      ],
-     "seconds_one_job": 2.719,
+     "seconds_one_job": 2.678,
      "jobs": 8,
      "lines": 19461,
      "failed_files": 0,
      "ignored_commits": 0,
-     "people_with_lines": 470,
-     "moved_on_730": 438,
+     "people_with_lines": 471,
+     "moved_on_730": 439,
      "top10_moved_on_lines": [
       4697,
       1184,
@@ -227,19 +227,19 @@
      ]
     },
     "-w": {
-     "seconds_median": 0.709,
+     "seconds_median": 0.696,
      "seconds_all": [
-      0.716,
-      0.709,
-      0.707
+      0.694,
+      0.696,
+      0.696
      ],
-     "seconds_one_job": 2.787,
+     "seconds_one_job": 2.765,
      "jobs": 8,
      "lines": 19461,
      "failed_files": 0,
      "ignored_commits": 0,
-     "people_with_lines": 470,
-     "moved_on_730": 439,
+     "people_with_lines": 471,
+     "moved_on_730": 440,
      "top10_moved_on_lines": [
       4743,
       1160,
@@ -258,19 +258,19 @@
      "moved_on_lost_vs_plain": 10
     },
     "-w -M": {
-     "seconds_median": 0.816,
+     "seconds_median": 0.808,
      "seconds_all": [
-      0.81,
-      0.816,
-      0.816
+      0.832,
+      0.808,
+      0.801
      ],
-     "seconds_one_job": 2.983,
+     "seconds_one_job": 2.909,
      "jobs": 8,
      "lines": 19461,
      "failed_files": 0,
      "ignored_commits": 0,
-     "people_with_lines": 477,
-     "moved_on_730": 446,
+     "people_with_lines": 478,
+     "moved_on_730": 447,
      "top10_moved_on_lines": [
       4790,
       1174,
@@ -289,19 +289,19 @@
      "moved_on_lost_vs_plain": 13
     },
     "-w -M ignore-revs": {
-     "seconds_median": 0.847,
+     "seconds_median": 0.832,
      "seconds_all": [
-      0.856,
-      0.837,
-      0.847
+      0.83,
+      0.836,
+      0.832
      ],
-     "seconds_one_job": 3.07,
+     "seconds_one_job": 2.971,
      "jobs": 8,
      "lines": 19461,
      "failed_files": 0,
      "ignored_commits": 1,
-     "people_with_lines": 497,
-     "moved_on_730": 466,
+     "people_with_lines": 498,
+     "moved_on_730": 467,
      "top10_moved_on_lines": [
       5073,
       1271,
@@ -320,19 +320,19 @@
      "moved_on_lost_vs_plain": 12
     },
     "-w -M -C ignore-revs (default)": {
-     "seconds_median": 0.959,
+     "seconds_median": 0.941,
      "seconds_all": [
-      0.959,
-      0.955,
-      0.976
+      0.941,
+      0.94,
+      0.948
      ],
-     "seconds_one_job": 3.636,
+     "seconds_one_job": 3.589,
      "jobs": 8,
      "lines": 19461,
      "failed_files": 0,
      "ignored_commits": 1,
-     "people_with_lines": 500,
-     "moved_on_730": 469,
+     "people_with_lines": 501,
+     "moved_on_730": 470,
      "top10_moved_on_lines": [
       5095,
       1275,
@@ -351,19 +351,19 @@
      "moved_on_lost_vs_plain": 12
     },
     "-w -M -C -C ignore-revs": {
-     "seconds_median": 1.161,
+     "seconds_median": 1.202,
      "seconds_all": [
-      1.166,
-      1.155,
-      1.161
+      1.212,
+      1.202,
+      1.188
      ],
-     "seconds_one_job": 5.48,
+     "seconds_one_job": 5.449,
      "jobs": 8,
      "lines": 19461,
      "failed_files": 0,
      "ignored_commits": 1,
-     "people_with_lines": 502,
-     "moved_on_730": 471,
+     "people_with_lines": 503,
+     "moved_on_730": 472,
      "top10_moved_on_lines": [
       4946,
       1377,
@@ -390,13 +390,13 @@
    "files_kept": 76,
    "variants": {
     "plain": {
-     "seconds_median": 0.307,
+     "seconds_median": 0.33,
      "seconds_all": [
-      0.307,
-      0.309,
-      0.306
+      0.327,
+      0.33,
+      0.335
      ],
-     "seconds_one_job": 1.426,
+     "seconds_one_job": 1.45,
      "jobs": 8,
      "lines": 13894,
      "failed_files": 0,
@@ -417,13 +417,13 @@
      ]
     },
     "-w": {
-     "seconds_median": 0.32,
+     "seconds_median": 0.342,
      "seconds_all": [
-      0.313,
-      0.32,
-      0.322
+      0.336,
+      0.342,
+      0.35
      ],
-     "seconds_one_job": 1.581,
+     "seconds_one_job": 1.551,
      "jobs": 8,
      "lines": 13894,
      "failed_files": 0,
@@ -448,13 +448,13 @@
      "moved_on_lost_vs_plain": 3
     },
     "-w -M": {
-     "seconds_median": 0.546,
+     "seconds_median": 0.571,
      "seconds_all": [
-      0.538,
-      0.55,
-      0.546
+      0.567,
+      0.572,
+      0.571
      ],
-     "seconds_one_job": 1.865,
+     "seconds_one_job": 1.87,
      "jobs": 8,
      "lines": 13894,
      "failed_files": 0,
@@ -479,13 +479,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M ignore-revs": {
-     "seconds_median": 0.573,
+     "seconds_median": 0.586,
      "seconds_all": [
-      0.573,
-      0.58,
-      0.557
+      0.589,
+      0.578,
+      0.586
      ],
-     "seconds_one_job": 1.896,
+     "seconds_one_job": 1.877,
      "jobs": 8,
      "lines": 13894,
      "failed_files": 0,
@@ -510,13 +510,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M -C ignore-revs (default)": {
-     "seconds_median": 0.582,
+     "seconds_median": 0.629,
      "seconds_all": [
-      0.58,
-      0.6,
-      0.582
+      0.629,
+      0.632,
+      0.613
      ],
-     "seconds_one_job": 2.377,
+     "seconds_one_job": 2.381,
      "jobs": 8,
      "lines": 13894,
      "failed_files": 0,
@@ -541,13 +541,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M -C -C ignore-revs": {
-     "seconds_median": 0.603,
+     "seconds_median": 0.636,
      "seconds_all": [
-      0.602,
-      0.633,
-      0.603
+      0.632,
+      0.641,
+      0.636
      ],
-     "seconds_one_job": 2.941,
+     "seconds_one_job": 2.951,
      "jobs": 8,
      "lines": 13894,
      "failed_files": 0,
@@ -580,13 +580,13 @@
    "files_kept": 188,
    "variants": {
     "plain": {
-     "seconds_median": 0.817,
+     "seconds_median": 0.86,
      "seconds_all": [
-      0.814,
-      0.817,
-      0.83
+      0.86,
+      0.856,
+      0.867
      ],
-     "seconds_one_job": 3.599,
+     "seconds_one_job": 3.598,
      "jobs": 8,
      "lines": 31810,
      "failed_files": 0,
@@ -607,13 +607,13 @@
      ]
     },
     "-w": {
-     "seconds_median": 0.856,
+     "seconds_median": 0.878,
      "seconds_all": [
-      0.867,
-      0.856,
-      0.85
+      0.878,
+      0.871,
+      0.891
      ],
-     "seconds_one_job": 3.704,
+     "seconds_one_job": 3.751,
      "jobs": 8,
      "lines": 31810,
      "failed_files": 0,
@@ -638,13 +638,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M": {
-     "seconds_median": 0.871,
+     "seconds_median": 0.927,
      "seconds_all": [
-      0.871,
-      0.876,
-      0.871
+      0.913,
+      0.927,
+      0.93
      ],
-     "seconds_one_job": 4.066,
+     "seconds_one_job": 3.98,
      "jobs": 8,
      "lines": 31810,
      "failed_files": 0,
@@ -669,13 +669,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M ignore-revs": {
-     "seconds_median": 0.915,
+     "seconds_median": 0.897,
      "seconds_all": [
-      0.905,
-      0.924,
-      0.915
+      0.884,
+      0.899,
+      0.897
      ],
-     "seconds_one_job": 4.349,
+     "seconds_one_job": 4.114,
      "jobs": 8,
      "lines": 31810,
      "failed_files": 0,
@@ -700,13 +700,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M -C ignore-revs (default)": {
-     "seconds_median": 1.304,
+     "seconds_median": 1.285,
      "seconds_all": [
-      1.316,
-      1.304,
-      1.298
+      1.309,
+      1.285,
+      1.278
      ],
-     "seconds_one_job": 6.241,
+     "seconds_one_job": 5.967,
      "jobs": 8,
      "lines": 31810,
      "failed_files": 0,
@@ -731,13 +731,13 @@
      "moved_on_lost_vs_plain": 4
     },
     "-w -M -C -C ignore-revs": {
-     "seconds_median": 1.531,
+     "seconds_median": 1.52,
      "seconds_all": [
-      1.531,
-      1.536,
-      1.513
+      1.522,
+      1.52,
+      1.498
      ],
-     "seconds_one_job": 7.742,
+     "seconds_one_job": 7.595,
      "jobs": 8,
      "lines": 31810,
      "failed_files": 0,

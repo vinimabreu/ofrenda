@@ -116,17 +116,26 @@ def heldout_table(data: dict[str, Any]) -> list[str]:
     return out
 
 
-def tone_table(data: dict[str, Any]) -> list[str]:
-    out = [f"The second reading, frozen before the independent set was opened: {data['judge_calls']:,} calls, "
-           f"median {data['judge_seconds_median']} s each. Lists on all {data['people_passing']} people; the "
-           f"reading and both on {data['sample_people']} of them (two per repository).", "",
-           "| set | sentences | lists | lists (sample) | second reading | both |", "|---|---:|---:|---:|---:|---:|"]
-    for label, v in data["sets"].items():
-        out.append(f"| {label} | {v['sentences']} | {v['lists_refused_pct']}% | {v['sample_lists_refused_pct']}% | "
-                   f"{v['judge_refused_pct']}% | {v['both_refused_pct']}% |")
-    real = data["real_cards"]
-    out.append(f"| real cards that passed the lists | {real['sentences']} | 0.0% | 0.0% | "
-               f"{real['judge_refused_pct']}% | {real['judge_refused_pct']}% |")
+def tone_table(data: dict[str, Any], by_reason: dict[str, Any]) -> list[str]:
+    out = [f"The second reading was committed (12c224f) before the second set was opened: {data['judge_calls']:,} "
+           f"calls, median {data['judge_seconds_median']} s each. Lists on all {by_reason['people']} people; the "
+           f"reading and both on {by_reason['sample_people']} of them. A catch counts only for its own reason "
+           "(death for death, and so on); for the good sets, a false refusal is a refusal for any of those "
+           "reasons.", "",
+           "| set | lists | second reading | both | after the audit, not blind: lists | both |",
+           "|---|---:|---:|---:|---:|---:|"]
+    for label, v in by_reason["blind"]["sets"].items():
+        after = by_reason["after_audit"]["sets"][label]
+        lists = v["lists_by_reason_pct"] if v["lists_by_reason_pct"] is not None else v["lists_by_reason_sample_pct"]
+        out.append(f"| {label} | {lists}% | {v['judge_by_reason_pct']}% | {v['both_by_reason_pct']}% | "
+                   f"{after['lists_by_reason_pct']}% | {after['both_by_reason_pct']}% |")
+    real = by_reason["blind"]["real_cards"]
+    out.append(f"| real cards that passed the lists | 0.0% | {real['judge_refused_pct']}% | "
+               f"{real['judge_refused_pct']}% | {by_reason['after_audit']['real_cards']['lists_refused']} of "
+               f"{real['sentences']} | |")
+    varies = by_reason["blind"]["gender_verdict_varies_with_the_name"]
+    out += ["", f"The second reading's gender answer changed with the person's name on {varies} of the 30 "
+            "gendered sentences of the second set."]
     return out
 
 
@@ -145,9 +154,10 @@ def main() -> int:
     if seeds.get("heldout"):
         lines += ["## Held-out wording", "", *heldout_table(seeds), ""]
     tone_path = Path(sys.argv[2]) if len(sys.argv) > 2 else None
-    if tone_path and tone_path.exists():
-        lines += ["## The second reading", "", "Refused, in percent of trials (good sets: false refusals).", "",
-                  *tone_table(load(tone_path)), ""]
+    reason_path = Path(sys.argv[3]) if len(sys.argv) > 3 else None
+    if tone_path and reason_path and tone_path.exists() and reason_path.exists():
+        lines += ["## The second reading", "", "Caught, in percent of trials (good sets: false refusals).", "",
+                  *tone_table(load(tone_path), load(reason_path)), ""]
     print("\n".join(lines))
     return 0
 

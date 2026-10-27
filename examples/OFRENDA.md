@@ -14,11 +14,11 @@ MIT License
 
 ## Ines Okonkwo
 
-> Ines Okonkwo established the foundation for a small job scheduler. They implemented a system where schedules can be written as fields similar to how cron reads them.
+> Ines Okonkwo established the foundation of the scheduler by creating a sorted list of jobs and a loop to execute them. They also implemented the ability to define schedules using cron-like expressions.
 >
-> In their words: "Start almanac, a small job scheduler" (`5ea5ca50f1`, 2011-03-14); "Add cron-like expressions" (`3bd5728192`, 2011-04-02); "Keep the job list sorted by next run" (`2370c0831d`, 2011-09-20)
+> In their words: "a small job scheduler" (`5ea5ca50f1`, 2011-03-14); "One sorted list of jobs and a loop that runs the ones that are due" (`5ea5ca50f1`, 2011-03-14); "A schedule can now be written as five fields" (`3bd5728192`, 2011-04-02)
 
-*words by gemma4:12b on the second try, every quote checked against git*
+*words by gemma4:12b, every quote checked against git*
 
 | | |
 |---|---|
@@ -33,11 +33,11 @@ MIT License
 
 ## Tomas Varga
 
-> Tomas Varga implemented logic to handle job retries with backoff and ensured the scheduler respects time zones during clock changes.
+> Tomas Varga implemented logic to ensure jobs retry with a backoff and correctly handle time zone transitions. They ensured that jobs maintain their original zones and behave correctly during clock changes.
 >
-> In their words: "Retry failed jobs with backoff" (`9c747ce829`, 2012-06-30); "Teach the scheduler about time zones" (`99340cb984`, 2012-02-11)
+> In their words: "Retry failed jobs with backoff" (`9c747ce829`, 2012-06-30); "Teach the scheduler about time zones" (`99340cb984`, 2012-02-11); "Handle the hour that repeats when clocks go back" (`8898c52629`, 2015-03-03)
 
-*words by gemma4:12b on the second try, every quote checked against git*
+*words by gemma4:12b, every quote checked against git*
 
 | | |
 |---|---|
@@ -52,9 +52,9 @@ MIT License
 
 ## Mei Lindqvist
 
-> Mei Lindqvist provided a tutorial for users to learn the system and added a command line interface for operators to manage scheduled jobs.
+> Mei Lindqvist provided the foundational tutorial and the command line interface to help users manage and run their scheduled jobs. These tools exist to provide a way for operators to see what is scheduled without opening a Python shell.
 >
-> In their words: "Write the tutorial" (`dd2b602a08`, 2013-05-04); "Add a command line to list and run jobs" (`3b05f08714`, 2013-01-15)
+> In their words: "Write the tutorial" (`dd2b602a08`, 2013-05-04); "Add a command line to list and run jobs" (`3b05f08714`, 2013-01-15); "Operators asked for a way to see what is scheduled" (`3b05f08714`, 2013-01-15)
 
 *words by gemma4:12b, every quote checked against git*
 
@@ -71,7 +71,7 @@ MIT License
 
 ## Rafael Oyelaran
 
-> Rafael Oyelaran implemented a persistent storage system to ensure jobs survive a restart and added locking to prevent multiple workers from claiming the same task.
+> Rafael Oyelaran implemented a persistent storage system to ensure jobs survive restarts and to prevent multiple workers from claiming the same task.
 >
 > In their words: "Store jobs in SQLite so they survive a restart" (`67252d2c51`, 2014-08-19); "Lock the store while a job runs" (`455f42b64d`, 2016-11-11); "the first one to claim it wins" (`455f42b64d`, 2016-11-11)
 
@@ -90,11 +90,11 @@ MIT License
 
 ## Sanna Petrova
 
-> Sanna Petrova added an explanation of how the system handles retries for failing jobs. This ensures users understand why a job does not run again immediately.
+> Sanna Petrova provided clarity on how the system handles job retries. They added this information because people were asking why a failing job did not run again at once.
 >
-> In their words: "Explain retries in the tutorial" (`5d347a71e2`, 2017-06-02); "why a failing job did not run again at once" (`5d347a71e2`, 2017-06-02)
+> In their words: "Explain retries in the tutorial" (`5d347a71e2`, 2017-06-02); "People kept asking why a failing job did not run again at once" (`5d347a71e2`, 2017-06-02)
 
-*words by gemma4:12b, every quote checked against git*
+*words by gemma4:12b on the second try, every quote checked against git*
 
 | | |
 |---|---|
@@ -114,7 +114,7 @@ MIT License
 - Revision 3aff65026debda92e05289fc36c2b42249356c52 (2026-09-28). Blame options: -w -M -C ignore-revs.
 - Files read: 14; skipped: none. Lines read: 213, of which 2 by bots.
 - Moved on: lines still here, and no commit reachable from the revision in the 730 days before its commit date.
-- Cards: 5; 3 written by gemma4:12b on the first try, 2 on the second, 0 from git alone after two rejected answers. Quotes checked against the commit messages: 12.
-- Second reading of each sentence for death, judgment or gender wording, by gemma4:12b: 5 sentences read, 0 refused. It is a model too: it lowers what gets through, not to zero.
+- Cards: 5; 4 written by gemma4:12b on the first try, 1 on the second, 0 from git alone after two rejected answers. Quotes checked against the commit messages: 14.
+- Second reading of each sentence for death, judgment or gender wording, by gemma4:12b: 5 sentences read, 0 refused. It is a model too, so some wording can still get through.
 - Commit 8019e4f9ac "Reformat with the code formatter" still holds 18 lines. If it only reformatted code, pass --ignore-rev 8019e4f9ac (or list it in .git-blame-ignore-revs) to give those lines back.
 - Made with ofrenda 0.1.0. Every number, date, path and line of code above comes from git. The sentences come from a model running on the machine that made this page. They are used only when every phrase they quote is in that person's commit messages and they pass a list of word rules; a sentence can still say something the messages do not support.

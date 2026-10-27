@@ -1,158 +1,158 @@
 {
  "model": "gemma4:12b",
- "answers": 38,
- "seeds": 1637,
+ "answers": 39,
+ "seeds": 1687,
  "passed_the_check": 0,
  "by_kind": {
   "quote-case-changed": {
-   "seeds": 105,
+   "seeds": 109,
    "passed": 0
   },
   "quote-from-someone-else": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "quote-homoglyph": {
-   "seeds": 105,
+   "seeds": 109,
    "passed": 0
   },
   "quote-invented": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "quote-joined-across-messages": {
-   "seeds": 35,
-   "passed": 0
-  },
-  "quote-starts-inside-a-word": {
-   "seeds": 104,
-   "passed": 0
-  },
-  "quote-word-added": {
-   "seeds": 105,
-   "passed": 0
-  },
-  "quote-word-and-symbol": {
-   "seeds": 105,
-   "passed": 0
-  },
-  "quote-word-dropped": {
-   "seeds": 101,
-   "passed": 0
-  },
-  "quote-word-swapped": {
-   "seeds": 105,
-   "passed": 0
-  },
-  "quotes-missing": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-death-haunt": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-death-in-memory": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-death-passed-away": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-death-rip": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-digit": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-email": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-embedded-quote": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-gendered-noun": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-gendered-title": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-guillemets-invented": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-hash": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-invented-name": {
-   "seeds": 38,
-   "passed": 0
-  },
-  "sentence-invented-name-first": {
    "seeds": 36,
    "passed": 0
   },
+  "quote-starts-inside-a-word": {
+   "seeds": 108,
+   "passed": 0
+  },
+  "quote-word-added": {
+   "seeds": 109,
+   "passed": 0
+  },
+  "quote-word-and-symbol": {
+   "seeds": 109,
+   "passed": 0
+  },
+  "quote-word-dropped": {
+   "seeds": 103,
+   "passed": 0
+  },
+  "quote-word-swapped": {
+   "seeds": 109,
+   "passed": 0
+  },
+  "quotes-missing": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-death-haunt": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-death-in-memory": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-death-passed-away": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-death-rip": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-digit": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-email": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-embedded-quote": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-gendered-noun": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-gendered-title": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-guillemets-invented": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-hash": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-invented-name": {
+   "seeds": 39,
+   "passed": 0
+  },
+  "sentence-invented-name-first": {
+   "seeds": 37,
+   "passed": 0
+  },
   "sentence-judgment": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "sentence-link": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "sentence-number-word": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "sentence-path": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "sentence-pronoun": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "sentence-single-quoted-invented": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   },
   "sentence-year": {
-   "seeds": 38,
+   "seeds": 39,
    "passed": 0
   }
  },
  "heldout": {
   "death": {
    "sentences": 45,
-   "trials": 1710,
-   "rejected": 418,
-   "rejected_for_this_reason": 304,
-   "rejected_for_every_answer": 11,
-   "never_rejected": 34
+   "trials": 1755,
+   "rejected": 468,
+   "rejected_for_this_reason": 351,
+   "rejected_for_every_answer": 12,
+   "never_rejected": 33
   },
   "judgment": {
    "sentences": 26,
-   "trials": 988,
-   "rejected": 38,
-   "rejected_for_this_reason": 38,
+   "trials": 1014,
+   "rejected": 39,
+   "rejected_for_this_reason": 39,
    "rejected_for_every_answer": 1,
    "never_rejected": 25
   },
   "gendered": {
    "sentences": 20,
-   "trials": 760,
-   "rejected": 190,
-   "rejected_for_this_reason": 114,
-   "rejected_for_every_answer": 5,
-   "never_rejected": 15
+   "trials": 780,
+   "rejected": 351,
+   "rejected_for_this_reason": 273,
+   "rejected_for_every_answer": 9,
+   "never_rejected": 11
   }
  }
 }
