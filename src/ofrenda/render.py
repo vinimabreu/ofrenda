@@ -112,8 +112,8 @@ def method_lines(ledger: Ledger, quiet_days: int, stats: CardStats | None, model
                      f"answers. Quotes checked against the commit messages: {stats.quotes_verified}.")
     if stats is not None and stats.tone_check:
         lines.append(f"Second reading of each sentence for death, judgment or gender wording, by {model}: "
-                     f"{stats.tone_calls + stats.tone_cached} sentences read, {stats.tone_refused} refused. It is a "
-                     "model too: it lowers what gets through, not to zero.")
+                     f"{stats.tone_sentences} sentences read, {stats.tone_refused} refused. It is a model too, so "
+                     "some wording can still get through.")
     elif stats is not None and stats.cards:
         lines.append("No second reading for death, judgment or gender wording (--no-tone-check): only the word "
                      "lists were applied.")
@@ -507,7 +507,7 @@ def as_json(ledger: Ledger, cards: Sequence[Card], *, quiet_days: int, moved_on:
 def _masked(value: Any) -> Any:
     if isinstance(value, str):
         return mask_emails(value)
-    if isinstance(value, list):
+    if isinstance(value, (list, tuple)):
         return [_masked(v) for v in value]
     if isinstance(value, dict):
         return {k: _masked(v) for k, v in value.items()}

@@ -197,3 +197,10 @@ def test_an_elder_who_moved_on_gets_a_candle() -> None:
     elder = LineFact("README", 1, "Lantern", "e" * 40, "2010-01-01", author=p.name, subject="Start", author_key=p.key)
     page = html_page(ledger(p, elder=elder), [], **KW)  # type: ignore[arg-type]
     assert page.count('class="candle"') == 1 and 'class="marigold"' not in page
+
+
+def test_addresses_are_masked_inside_snippet_tuples_in_the_json() -> None:
+    p = person()
+    p.snippet = [(1, "# Maintainer: jane.roe@corp.example")]
+    text = dumps(as_json(ledger(p), [Card(p, "", (), "git")], **KW))  # type: ignore[arg-type]
+    assert "jane.roe@corp.example" not in text and "<email>" in text

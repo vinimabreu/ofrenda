@@ -111,4 +111,12 @@ def test_the_footer_says_the_reader_is_a_model_too() -> None:
     smith = Cardsmith(FakeModel({p.name: GOOD_REPLY}), model="fake")
     smith.cards(ledger(p), [p])
     line = next(x for x in method_lines(ledger(p), 730, smith.stats, "fake") if x.startswith("Second reading"))
-    assert "1 sentences read, 0 refused" in line and "not to zero" in line
+    assert "1 sentences read, 0 refused" in line and "some wording can still get through" in line
+
+
+def test_an_unreadable_reply_counts_one_sentence() -> None:
+    p = person()
+    fake = FakeModel({p.name: [GOOD_REPLY, OTHER]}, verdicts={"let a blueprint": "not json"})
+    smith = Cardsmith(fake, model="fake")
+    smith.cards(ledger(p), [p])
+    assert smith.stats.tone_calls == 3 and smith.stats.tone_sentences == 2
