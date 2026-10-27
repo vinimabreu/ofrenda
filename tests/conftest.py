@@ -131,17 +131,28 @@ def prompt_messages(prompt: str) -> list[str]:
 class FakeModel:
     """Answers from a table keyed by person name: a dict, a reply string, or a callable
     (prompt -> reply). With no entry it writes a plain card quoting the first message's subject.
-    Counts its calls and keeps the prompts."""
+    Second readings (the tone check) are answered from ``verdicts``: the first entry whose key is
+    in the sentence wins, and a sentence with no entry reads clean. Counts both kinds of call."""
 
-    def __init__(self, answers: Mapping[str, Any] | None = None) -> None:
+    def __init__(self, answers: Mapping[str, Any] | None = None,
+                 verdicts: Mapping[str, Any] | None = None) -> None:
         self.answers = dict(answers or {})
+        self.verdicts = dict(verdicts or {})
         self.prompts: list[str] = []
+        self.readings: list[str] = []
 
     @property
     def calls(self) -> int:
         return len(self.prompts)
 
     def __call__(self, system: str, user: str, schema: dict[str, Any] | None = None) -> str:
+        from ofrenda.tone import TONE_SYSTEM
+        if system == TONE_SYSTEM:
+            self.readings.append(user)
+            for needle, verdict in self.verdicts.items():
+                if needle in user:
+                    return verdict if isinstance(verdict, str) else json.dumps(verdict)
+            return json.dumps({"death": False, "judgment": False, "gender": False})
         self.prompts.append(user)
         name = prompt_person(user)
         answer = self.answers.get(name)

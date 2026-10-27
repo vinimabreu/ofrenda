@@ -110,6 +110,13 @@ def method_lines(ledger: Ledger, quiet_days: int, stats: CardStats | None, model
         lines.append(f"Cards: {stats.cards}; {stats.first_try} written by {model} on the first try, "
                      f"{stats.after_retry} on the second, {stats.fallback} from git alone after two rejected "
                      f"answers. Quotes checked against the commit messages: {stats.quotes_verified}.")
+    if stats is not None and stats.tone_check:
+        lines.append(f"Second reading of each sentence for death, judgment or gender wording, by {model}: "
+                     f"{stats.tone_calls + stats.tone_cached} sentences read, {stats.tone_refused} refused. It is a "
+                     "model too: it lowers what gets through, not to zero.")
+    elif stats is not None and stats.cards:
+        lines.append("No second reading for death, judgment or gender wording (--no-tone-check): only the word "
+                     "lists were applied.")
     for suspect in ledger.suspects:
         lines.append(f'Commit {short(suspect.oid)} "{safe(suspect.subject)}" still holds '
                      f"{plural(suspect.lines, 'line')}. If it only reformatted code, pass --ignore-rev "

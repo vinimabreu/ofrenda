@@ -54,6 +54,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-copies", action="store_true",
                         help="blame without -C (lines moved from another file go to whoever moved them; faster)")
     parser.add_argument("--no-model", action="store_true", help="no model: cards from git alone")
+    parser.add_argument("--no-tone-check", action="store_true",
+                        help="skip the second reading, by the model, of each sentence for death, judgment or "
+                        "gender wording (on by default)")
     parser.add_argument("--model", default=model.DEFAULT_MODEL, help=f"Ollama model (default {model.DEFAULT_MODEL})")
     parser.add_argument("--host", default=model.DEFAULT_HOST, help="Ollama address (default %(default)s)")
     parser.add_argument("--allow-remote-model", action="store_true",
@@ -116,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"ofrenda: {error}", file=sys.stderr)
             return 2
         smith = Cardsmith(ask, model=args.model, cache=ReplyCache(cache_dir, args.model) if cache_dir else None,
-                          progress=stderr_progress)
+                          progress=stderr_progress, tone_check=not args.no_tone_check)
     try:
         made = smith.cards(ledger, chosen)
     except model.RemoteHostRefused as error:

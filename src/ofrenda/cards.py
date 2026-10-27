@@ -57,7 +57,7 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from . import wording
+from . import tone, wording
 from .ledger import CommitFact, Ledger, Person, fold, make_private_dir, write_private
 from .model import Ask
 
@@ -493,19 +493,57 @@ class CardStats:
     fallback: int = 0
     quotes_verified: int = 0
     seconds: float = 0.0
+    tone_calls: int = 0  # second readings asked of the model in this run
+    tone_cached: int = 0
+    tone_refused: int = 0  # sentences the second reading refused
+    tone_seconds: float = 0.0
+    tone_check: bool = False  # whether the second reading was on
     reasons: list[str] = field(default_factory=list)
 
 
 class Cardsmith:
-    """Writes cards. ``ask`` is the model; None builds every card from git alone."""
+    """Writes cards. ``ask`` is the model; None builds every card from git alone. With
+    ``tone_check`` (the default) a sentence that passes ``check_card`` also needs a clean second
+    reading by the same model (see ``tone``)."""
 
     def __init__(self, ask: Ask | None, *, model: str = "", cache: ReplyCache | None = None,
-                 progress: Callable[[int, int, str], None] | None = None) -> None:
+                 progress: Callable[[int, int, str], None] | None = None, tone_check: bool = True) -> None:
         self.ask = ask
         self.model = model
         self.cache = cache
         self.progress = progress
-        self.stats = CardStats()
+        self.tone_check = tone_check and ask is not None
+        self.stats = CardStats(tone_check=self.tone_check)
+
+    def _tone(self, name: str, sentence: str) -> str | None:
+        """The second reading of a sentence that passed the check: None, or the plain reason."""
+        assert self.ask is not None
+        verdict = tone.Verdict(error="not read")
+        for attempt in (1, 2):
+            key = tone.tone_key(self.model, name, sentence, attempt)
+            reply = self.cache.get(key) if self.cache is not None else None
+            if reply is not None:
+                self.stats.tone_cached += 1
+            else:
+                started = time.perf_counter()
+                reply = self.ask(tone.TONE_SYSTEM, tone.tone_prompt(name, sentence), tone.TONE_SCHEMA)
+                self.stats.tone_seconds += time.perf_counter() - started
+                self.stats.tone_calls += 1
+                if self.cache is not None:
+                    self.cache.put(key, reply)
+            verdict = tone.parse_verdict(reply)
+            if not verdict.error:
+                break
+        reason = verdict.reason()
+        if reason is not None:
+            self.stats.tone_refused += 1
+        return reason
+
+    def _check(self, answer: Answer, material: Material) -> str | None:
+        reason = check_card(answer, material)
+        if reason is None and self.tone_check:
+            reason = self._tone(material.name, " ".join(answer.text.split()))
+        return reason
 
     def _reply(self, key: str, prompt: str) -> tuple[str, bool]:
         assert self.ask is not None
@@ -527,13 +565,13 @@ class Cardsmith:
         prompt = prompt_for(material)
         reply, hit = self._reply(reply_key(self.model, ledger.commit, person.key, prompt), prompt)
         answer = parse_answer(reply)
-        first = check_card(answer, material)
+        first = self._check(answer, material)
         if first is None:
             return self._accept(person, answer, material, "model", (), hit)
         second_prompt = retry_prompt(prompt, first)
         reply, hit2 = self._reply(reply_key(self.model, ledger.commit, person.key, second_prompt), second_prompt)
         answer = parse_answer(reply)
-        second = check_card(answer, material)
+        second = self._check(answer, material)
         if second is None:
             return self._accept(person, answer, material, "model-retry", (first,), hit and hit2)
         self.stats.reasons += [first, second]
