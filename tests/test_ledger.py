@@ -327,18 +327,19 @@ def test_a_cached_ledger_takes_the_name_of_the_clone_it_is_read_from(make_repo: 
 
 
 @pytest.mark.parametrize("name, email", [
-    ("jenkins", "jenkins@ci.example"), ("Travis CI", "builds@travis.example"), ("CircleCI", "x@y.example"),
-    ("buildbot", "b@b.example"), ("GitHub Actions", "actions@github.example"), ("gitlab-ci", "g@l.example"),
-    ("Azure Pipelines", "a@p.example"), ("AppVeyor", "a@v.example"), ("Some Name", "jenkins@build-server.example"),
-    ("renovate[bot]", "r@b.example"), ("pre-commit-ci", "p@c.example"),
+    ("Travis CI", "builds@travis-ci.org"), ("CircleCI", "bot@circleci.com"), ("AppVeyor", "x@ci.appveyor.com"),
+    ("GitHub", "noreply@github.com"), ("github-actions", "actions@github.com"),
+    ("Azure Pipelines", "azuredevops@microsoft.com"), ("renovate[bot]", "r@b.example"),
+    ("Renovate Bot", "bot@renovateapp.com"), ("pre-commit-ci", "p@c.example"), ("dependabot", "x@y.example"),
 ])
-def test_ci_accounts_are_bots(name: str, email: str) -> None:
+def test_ci_services_are_bots_by_their_address(name: str, email: str) -> None:
     assert is_bot(name, email)
 
 
-@pytest.mark.parametrize("name, email", [("Jenkins Smith", "jsmith@corp.example"), ("Drew Travis", "drew@t.example"),
+@pytest.mark.parametrize("name, email", [("travis", "travis@tvn.example"), ("jenkins", "jenkins@ci.example"),
+                                         ("Jenkins Smith", "jsmith@corp.example"), ("Drew Travis", "drew@t.example"),
                                          ("Ana Quintero", "ana@quintero.example")])
-def test_people_named_like_ci_services_are_people(name: str, email: str) -> None:
+def test_a_name_alone_never_makes_a_bot(name: str, email: str) -> None:
     assert not is_bot(name, email)
 
 

@@ -50,12 +50,14 @@ GENERIC_NAMES = frozenset({
 BOT_NAMES = frozenset({"dependabot", "renovate", "github-actions", "pre-commit-ci", "greenkeeper", "pyup-bot",
                        "snyk-bot", "mergify", "allcontributors", "imgbot", "web-flow"})
 # Build and CI services commit under names like these; their commits are not a person's work.
-CI_ACCOUNTS = ("jenkins", "travis", "travis ci", "travis-ci", "circleci", "circle ci", "buildbot", "github actions",
-               "github-actions", "gitlab ci", "gitlab-ci", "azure pipelines", "azure-pipelines", "appveyor",
-               "pre-commit", "pre-commit-ci", "renovate", "dependabot", "greenkeeper", "semantic-release",
-               "release-please", "codecov", "coveralls", "teamcity", "bamboo", "drone", "buildkite", "bitrise",
-               "cirrus ci", "cirrus-ci", "netlify", "vercel", "heroku", "readthedocs", "weblate", "transifex",
-               "crowdin")
+# Build, CI and bot services, by the addresses they commit from. A bare name is not enough: a person
+# can be called Travis or Jenkins.
+CI_ADDRESSES = frozenset({"noreply@github.com", "actions@github.com", "action@github.com",
+                          "azuredevops@microsoft.com", "bot@renovateapp.com", "support@dependabot.com",
+                          "noreply@weblate.org", "hosted@weblate.org"})
+CI_DOMAINS = ("travis-ci.org", "travis-ci.com", "circleci.com", "appveyor.com", "dependabot.com", "renovateapp.com",
+              "greenkeeper.io", "pre-commit.ci", "pyup.io", "snyk.io", "mergify.io", "mergify.com", "codecov.io",
+              "coveralls.io", "transifex.com", "crowdin.com", "allcontributors.org", "imgbot.net")
 FORMATTING = re.compile(r"\b(re-?format\w*|black|autopep8|yapf|isort|prettier|clang-format|gofmt|rustfmt|"
                         r"ruff format|code style|formatting|whitespace|indentation|pep ?8|tabs to spaces|"
                         r"trailing spaces|line endings|crlf)\b", re.I)
@@ -122,19 +124,15 @@ def fold(text: str) -> str:
 
 
 def is_bot(name: str, email: str) -> bool:
-    """Bots and CI accounts: a ``[bot]`` marker, a name in ``BOT_NAMES``, a name ending in "bot",
-    or a name or address local part that is one of ``CI_ACCOUNTS`` (with or without "ci", "bot",
-    "build" or a number after it)."""
-    low_name, low_email = " ".join(name.casefold().split()), email.casefold()
+    """Bots and CI services: a ``[bot]`` marker, a name in ``BOT_NAMES`` or ending in "bot", or an
+    address in ``CI_ADDRESSES`` or at one of ``CI_DOMAINS``. A person's name alone never makes them
+    a bot."""
+    low_name, low_email = " ".join(name.casefold().split()), email.casefold().strip("<>")
     if ("[bot]" in low_name or "[bot]" in low_email or low_name in BOT_NAMES or low_name.endswith("-bot")
             or low_name.endswith(" bot")):
         return True
-    local = low_email.split("@", 1)[0]
-    for account in CI_ACCOUNTS:
-        pattern = rf"^{re.escape(account)}(?:[ ._-]?(?:ci|bot|build|builds|server|agent|\d+))?$"
-        if re.match(pattern, low_name) or re.match(pattern, local):
-            return True
-    return False
+    domain = low_email.rsplit("@", 1)[-1]
+    return low_email in CI_ADDRESSES or any(domain == d or domain.endswith("." + d) for d in CI_DOMAINS)
 
 
 def name_can_merge(name: str) -> bool:
