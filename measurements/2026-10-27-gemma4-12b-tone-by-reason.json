@@ -1,0 +1,137 @@
+{
+ "blind": {
+  "code": "12c224f",
+  "sets": {
+   "heldout/death": {
+    "sentences": 45,
+    "sample_trials": 360,
+    "lists_trials": 1710,
+    "lists_by_reason_pct": 17.8,
+    "lists_by_reason_sample_pct": 17.8,
+    "judge_by_reason_pct": 96.4,
+    "both_by_reason_pct": 96.4,
+    "lists_any_reason_pct": 24.4
+   },
+   "heldout/judgment": {
+    "sentences": 26,
+    "sample_trials": 208,
+    "lists_trials": 988,
+    "lists_by_reason_pct": 3.8,
+    "lists_by_reason_sample_pct": 3.8,
+    "judge_by_reason_pct": 96.2,
+    "both_by_reason_pct": 96.2,
+    "lists_any_reason_pct": 3.8
+   },
+   "heldout/gendered": {
+    "sentences": 20,
+    "sample_trials": 160,
+    "lists_trials": 760,
+    "lists_by_reason_pct": 15.0,
+    "lists_by_reason_sample_pct": 15.0,
+    "judge_by_reason_pct": 90.0,
+    "both_by_reason_pct": 90.0,
+    "lists_any_reason_pct": 25.0
+   },
+   "heldout-v2/death": {
+    "sentences": 50,
+    "sample_trials": 400,
+    "lists_trials": 1900,
+    "lists_by_reason_pct": 58.0,
+    "lists_by_reason_sample_pct": 58.0,
+    "judge_by_reason_pct": 94.2,
+    "both_by_reason_pct": 98.0,
+    "lists_any_reason_pct": 73.8
+   },
+   "heldout-v2/judgment": {
+    "sentences": 35,
+    "sample_trials": 280,
+    "lists_trials": 1330,
+    "lists_by_reason_pct": 20.0,
+    "lists_by_reason_sample_pct": 20.0,
+    "judge_by_reason_pct": 100.0,
+    "both_by_reason_pct": 100.0,
+    "lists_any_reason_pct": 56.6
+   },
+   "heldout-v2/gendered": {
+    "sentences": 30,
+    "sample_trials": 240,
+    "lists_trials": 1140,
+    "lists_by_reason_pct": 79.7,
+    "lists_by_reason_sample_pct": 80.0,
+    "judge_by_reason_pct": 79.2,
+    "both_by_reason_pct": 95.0,
+    "lists_any_reason_pct": 86.7
+   },
+   "heldout-v2/clean": {
+    "sentences": 80,
+    "sample_trials": 640,
+    "lists_trials": 3040,
+    "lists_by_reason_pct": null,
+    "lists_by_reason_sample_pct": 3.8,
+    "judge_by_reason_pct": 0.0,
+    "both_by_reason_pct": 3.8,
+    "lists_any_reason_pct": 21.2
+   }
+  },
+  "real_cards": {
+   "sentences": 38,
+   "lists_refused": 0,
+   "judge_refused": 0,
+   "judge_refused_pct": 0.0
+  },
+  "gender_verdict_varies_with_the_name": 10
+ },
+ "after_audit": {
+  "sets": {
+   "heldout/death": {
+    "lists_by_reason_pct": 20.0,
+    "lists_by_reason_sample_pct": 20.0,
+    "both_by_reason_pct": 96.4,
+    "lists_any_reason_pct": 26.7
+   },
+   "heldout/judgment": {
+    "lists_by_reason_pct": 3.8,
+    "lists_by_reason_sample_pct": 3.8,
+    "both_by_reason_pct": 96.2,
+    "lists_any_reason_pct": 3.8
+   },
+   "heldout/gendered": {
+    "lists_by_reason_pct": 35.0,
+    "lists_by_reason_sample_pct": 35.0,
+    "both_by_reason_pct": 95.6,
+    "lists_any_reason_pct": 45.0
+   },
+   "heldout-v2/death": {
+    "lists_by_reason_pct": 58.0,
+    "lists_by_reason_sample_pct": 58.0,
+    "both_by_reason_pct": 98.0,
+    "lists_any_reason_pct": 73.8
+   },
+   "heldout-v2/judgment": {
+    "lists_by_reason_pct": 20.0,
+    "lists_by_reason_sample_pct": 20.0,
+    "both_by_reason_pct": 100.0,
+    "lists_any_reason_pct": 55.7
+   },
+   "heldout-v2/gendered": {
+    "lists_by_reason_pct": 86.4,
+    "lists_by_reason_sample_pct": 86.7,
+    "both_by_reason_pct": 98.3,
+    "lists_any_reason_pct": 93.3
+   },
+   "heldout-v2/clean": {
+    "lists_by_reason_pct": 2.5,
+    "lists_by_reason_sample_pct": 2.5,
+    "both_by_reason_pct": 2.5,
+    "lists_any_reason_pct": 20.0
+   }
+  },
+  "real_cards": {
+   "sentences": 38,
+   "lists_refused": 0,
+   "reasons": []
+  }
+ },
+ "people": 38,
+ "sample_people": 8
+}
